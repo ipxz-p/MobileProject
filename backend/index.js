@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import 'express-async-errors';
 import cookieParser from 'cookie-parser';
 import connectDB from './config/db.js';
+import authRoute from './routes/authRoute.js'
 
 dotenv.config()
 connectDB()
@@ -14,6 +15,8 @@ app.use(express.json())
 app.use(urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(cors({credentials: true}))
+
+app.use("/auth", authRoute)
 
 mongoose.connection.once("open", ()=>{
     console.log("Connected to DB");
