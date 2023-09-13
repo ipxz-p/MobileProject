@@ -109,7 +109,7 @@ function FollowsNavigator(){
 function WritingNavigator(){
   return (
     <WriteNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#4a148c"}, headerTintColor: "white", headerTitleAlign: "center"}}>
-      <WriteNavigator.Screen name="Writing" component={WritingScreen} />
+      <WriteNavigator.Screen name="Writings"  component={WritingScreen} />
       <WriteNavigator.Screen name="AddEditWritingScreen" component={AddEditWritingScreen} />
       <WriteNavigator.Screen name="AddEditChapterScreen" component={AddEditChapterScreen} />
       <WriteNavigator.Screen name="ContentChpaterScreen" component={ContentChpaterScreen} />
