@@ -1,11 +1,11 @@
 // bae
-import { StyleSheet, View, Text, TouchableOpacity, Image, TouchableHighlight} from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity, Image, TouchableHighlight, ScrollView} from 'react-native'
 import React from 'react'
 import { Ionicons, Octicons, MaterialCommunityIcons , FontAwesome } from "@expo/vector-icons";
 
 const WritingScreen = ({route, navigation}) => {
   return (
-  <View>
+  <ScrollView>
       {/* ปุ่มเพิ่มงานเขียน */}
     <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("AddEditWritingScreen")}}>
       <Text style={{ color: '#fff' }}>เพิ่มงานเขียนใหม่</Text>
@@ -63,7 +63,7 @@ const WritingScreen = ({route, navigation}) => {
           </View>
         </View>
     </TouchableOpacity>
-  </View>
+  </ScrollView>
   )
 }
 const styles = StyleSheet.create({
