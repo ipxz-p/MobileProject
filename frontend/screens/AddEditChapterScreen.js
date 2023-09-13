@@ -47,10 +47,6 @@ const styles = StyleSheet.create({
   },
   view:{
   margin: 22,
-  },
-  chapter:{
-  marginLeft: 13,
-  marginBottom: 18,
   }
 })
 
