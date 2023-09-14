@@ -56,7 +56,7 @@ const AddEditWritingScreen = ({route, navigation}) => {
       
       {/* textinput คำโปรย */}
       <Text style={{fontWeight: 'bold', fontSize: 19, marginBottom: 10,}}>คำโปรย</Text>
-      <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 40, borderColor: '#dcdcdc', padding: 8,}} placeholder="ชื่อเรื่องนิยาย"></TextInput>
+      <TextInput multiline style={{ borderWidth: 1, borderRadius: 5, height: 40, borderColor: '#dcdcdc', padding: 8, paddingTop: 10,}} placeholder="คำโปรยนิยาย"></TextInput>
       </View>
 
        {/* เส้นสีเทา */}
