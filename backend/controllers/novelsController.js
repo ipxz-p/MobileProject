@@ -6,10 +6,11 @@ export const createNovel = async (req, res) => {
         title,
         description
     } = req.body
+
     if(!title || !description){
         return res.status(400).json({message: 'Please enter title and description'})
     }
-    const images = "qwe"
+    const images = req.files[0].originalname
     const Novel = await novel.create({
         title,
         description,
