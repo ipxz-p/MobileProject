@@ -25,6 +25,10 @@ const novelSchema = new mongoose.Schema({
             type: String,
             required: true
         },
+        content: {
+            type: String,
+            required: true
+        },
         like: [String],
         views: [String],
         comments: [{

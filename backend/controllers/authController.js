@@ -1,6 +1,8 @@
 import users from "../models/users.js";
 import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken";
+
+
 export const register = async (req, res) => {
     const {
         username,
@@ -27,7 +29,7 @@ export const register = async (req, res) => {
         password: hashPassword
     })
     if(User){
-        res.status(201).json({
+        res.status(200).json({
             message: 'Success'
         })
     }else{
@@ -56,6 +58,7 @@ export const login = async (req, res) => {
     const accessToken = jwt.sign(
     {
         "UserInfo": {
+            "id": foundUser._id,
             "username": foundUser.username,
             "email": foundUser.email,
             "roles": foundUser.roles,
@@ -66,25 +69,6 @@ export const login = async (req, res) => {
     process.env.ACCESS_TOKEN_KEY,
     {expiresIn: '10m'}
     )
-    const refreshToken = jwt.sign(
-        {
-            "email": foundUser.email
-        },
-        process.env.REFRESH_TOKEN_KEY,
-        {expiresIn: '1d'}
-    )
-    res.cookie('jwt', refreshToken, {
-        httpOnly: true,
-        secure: true,
-        sameSite: 'None',
-        maxAge: 1 * 24 * 60 * 60 * 1000
-    })
-    res.json({accessToken})
+    res.status(200).json({accessToken})
 }
 
-export const logout = async (req, res) => {
-    const cookies = req.cookies
-    if(!cookies?.jwt) return res.sendStatus(204)
-    res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true })
-    res.json({message: 'cookies claerd'})
-}
