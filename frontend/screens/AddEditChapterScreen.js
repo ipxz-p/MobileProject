@@ -1,4 +1,5 @@
 import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, Switch, ScrollView} from 'react-native'
+import { LinearGradient } from 'expo-linear-gradient';
 import React from 'react'
 
 const AddEditChapterScreen = ({route, navigation}) => {
@@ -6,7 +7,7 @@ const AddEditChapterScreen = ({route, navigation}) => {
     <View style={styles.view}>
 
       {/* รูปปก */}
-      <Image style={{height: 200, width: 200, resizeMode: 'contain', borderRadius: 10, alignSelf: 'center', marginTop: 10,}} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}}></Image>
+      <Image style={{height: 200, width: 200, resizeMode: 'contain', borderRadius: 10, alignSelf: 'center', marginTop: 20,}} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}}></Image>
 
       <Text style={{ fontWeight: 'bold', fontSize: 19, marginBottom: 10, marginTop: 25, marginLeft: 20,}}>บทที่ *</Text>
 
@@ -18,9 +19,13 @@ const AddEditChapterScreen = ({route, navigation}) => {
       {/*ชื่อตอน */}
       <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 40, borderColor: '#dcdcdc', padding: 8, marginBottom: 15, marginLeft: 20, marginRight: 20,}} placeholder="(ตัวอย่าง, แรกพบเธอ)"></TextInput>
       {/* ปุ่มบันทึก*/}
-      <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("ContentChpaterScreen")}}>
+
+      <LinearGradient  style={{borderRadius: 20, marginTop: 12, marginBottom: 5, alignSelf: 'center'}} colors={['#FBBC2C', '#FE8F7C']} >
+        <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("ContentChpaterScreen")}}>
         <Text style={{ color: '#fff' }}>บันทึก</Text>
       </TouchableOpacity>
+      </LinearGradient>
+      
 
       
 
@@ -34,15 +39,15 @@ const AddEditChapterScreen = ({route, navigation}) => {
 const styles = StyleSheet.create({
 
   addButton:{
-    backgroundColor: "#7551C6",
-    width: 80,
-    height: 45,
+    width: 100,
+    height: 40,
     justifyContent: 'center',
     alignItems: 'center',
     alignSelf: 'center',
     padding: 10,
     borderRadius: 50,
-    marginTop: 20,
+    alignSelf: 'center'
+
     
   },
   view:{

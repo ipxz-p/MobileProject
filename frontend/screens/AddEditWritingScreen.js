@@ -2,6 +2,7 @@
 import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, Switch, ScrollView} from 'react-native'
 import React from 'react'
 import { Ionicons, Octicons, MaterialCommunityIcons , FontAwesome } from "@expo/vector-icons";
+import { LinearGradient } from 'expo-linear-gradient';
 
 const AddEditWritingScreen = ({route, navigation}) => {
   return (
@@ -67,9 +68,12 @@ const AddEditWritingScreen = ({route, navigation}) => {
         {/* จำนวนตอน */}
         <Text style={{fontWeight: 'bold', fontSize: 19,}}>ตอนทั้งหมด (2)</Text>
         {/* ปุ่มเพิ่มตอนใหม่ */}
-        <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("AddEditChapterScreen")}}>
-          <Text style={{ color: '#fff' }}>เพิ่มตอนใหม่</Text>
-        </TouchableOpacity>
+        <LinearGradient  style={{borderRadius: 50, marginTop: 25, marginBottom: 5,  width:150,  alignSelf: 'center',}} colors={['#FBBC2C', '#FE8F7C']} >
+          <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("AddEditChapterScreen")}}>
+            <Text style={{ color: '#fff' }}>เพิ่มตอนใหม่</Text>
+          </TouchableOpacity>
+        </LinearGradient>
+       
       </View>
 
         {/* ก้อนตอน */}
@@ -111,15 +115,13 @@ const AddEditWritingScreen = ({route, navigation}) => {
 const styles = StyleSheet.create({
 
   addButton:{
-    backgroundColor: "#7551C6",
     width: 150,
     height: 45,
     justifyContent: 'center',
     alignItems: 'center',
-    alignSelf: 'center',
+    
     padding: 10,
     borderRadius: 50,
-    marginTop: 20,
   },
   view:{
   margin: 22,

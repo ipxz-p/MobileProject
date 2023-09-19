@@ -2,15 +2,20 @@
 import { StyleSheet, View, Text, TouchableOpacity, Image, TouchableHighlight, ScrollView} from 'react-native'
 import React from 'react'
 import { Ionicons, Octicons, MaterialCommunityIcons , FontAwesome } from "@expo/vector-icons";
+import { LinearGradient } from 'expo-linear-gradient';
 
 const WritingScreen = ({route, navigation}) => {
   return (
-  <ScrollView>
+    <View>
       {/* ปุ่มเพิ่มงานเขียน */}
-    <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("AddEditWritingScreen")}}>
-      <Text style={{ color: '#fff' }}>เพิ่มงานเขียนใหม่</Text>
-    </TouchableOpacity>
+      <LinearGradient  style={{borderRadius: 50, marginTop: 25, marginBottom: 5,  width:150, marginLeft: 220,}} colors={['#FBBC2C', '#FE8F7C']} >
+        <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("AddEditWritingScreen")}}>
+          <Text style={{ color: '#fff' }}>เพิ่มงานเขียนใหม่</Text>
+        </TouchableOpacity>
+      </LinearGradient>
       
+    
+    <ScrollView>
     {/* กล่องนิยายแต่ละเรื่อง*/}
     <TouchableOpacity style={styles.myFiction} onPress={() => {navigation.navigate("AddEditWritingScreen")}}>
       {/* รูปปกนิยายและข้อมูลนิยาย */}
@@ -64,20 +69,19 @@ const WritingScreen = ({route, navigation}) => {
         </View>
     </TouchableOpacity>
   </ScrollView>
+    </View>
+  
   )
 }
 const styles = StyleSheet.create({
   
   addButton:{
-    backgroundColor: "#7551C6",
-    width: 150,
+    
     height: 45,
     justifyContent: 'center',
     alignItems: 'center',
     padding: 10,
-    borderRadius: 50,
-    marginLeft: 225,
-    marginTop: 20,
+
   },
 
   myFiction:{
