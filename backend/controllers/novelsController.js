@@ -1,48 +1,164 @@
-import novel from "../models/novel.js"
+import mongoose, { isValidObjectId } from "mongoose"
+import novels from "../models/novels.js"
+
+export const getNovels = async (req, res) => {
+    const Novels = await novels.find().exec()
+    return res.status(200).json(Novels)
+}
 
 export const createNovel = async (req, res) => {
     const {
         owner,
         title,
-        description
+        description,
+        category
     } = req.body
-
-    if(!title || !description){
-        return res.status(400).json({message: 'Please enter title and description'})
+    if (!isValidObjectId(owner)) return res.status(400).json({ message: "Non valid objectId" })
+    if (!title || !description || !category) {
+        return res.status(400).json({ message: 'Please enter title description and category' })
+    }
+    if (!req.files.length) {
+        res.status(400).json({ message: 'Please choose an image of this novel' })
     }
     const images = req.files[0].originalname
-    const Novel = await novel.create({
+    const Novel = await novels.create({
         title,
         description,
         images,
-        owner
+        owner,
+        category
     })
-    if(Novel){
+    if (Novel) {
         return res.status(200).json(Novel)
-    }else{
-        return res.status(400).json({message: 'Error occured'})
+    } else {
+        return res.status(400).json({ message: 'Error occured' })
     }
+}
+
+export const editNovel = async (req, res) => {
+    const {
+        novelId,
+        title,
+        description,
+    } = req.body
+    if (!isValidObjectId(novelId)) return res.status(400).json({ message: "Non valid objectId" })
+    const Novel = await novels.findById(novelId).exec()
+    if (!Novel) return res.status(400).json({ message: 'Novel not found' })
+    if (title) Novel.title = title
+    if (description) Novel.description = description
+    if (req.files?.length) Novel.images = req.files[0].originalname
+    await Novel.save()
+    return res.status(200).json(Novel)
+
+}
+
+export const deleteNovel = async (req, res) => {
+    const { novelId } = req.body
+    if (!isValidObjectId(novelId)) return res.status(400).json({ message: "Non valid objectId" })
+    const Novel = await novels.findById(novelId)
+    if (!Novel) {
+        return res.status(400).json({ message: 'Novel not found' })
+    }
+    await Novel.deleteOne();
+    return res.status(200).json({ message: 'Delete success' })
+}
+
+export const getBookshelfByUserId = async (req, res) => {
+    const {
+        userId
+    } = req.body
+    const Novel = await novels.find({bookshelf: { $in: [userId] }}).exec()
+    return res.status(200).json(Novel)
+}
+
+export const addNovelToBookshelf = async (req, res) => {
+    const {
+        novelId,
+        userId
+    } = req.body
+    const Novel = await novels.findById(novelId).exec()
+    if (!Novel) {
+        return res.status(400).json({ message: "Novel not found" })
+    }
+    const userIdObjectId = new mongoose.Types.ObjectId(userId);
+    const userInBookshelf = Novel.bookshelf.some((item) => item.equals(userIdObjectId));
+    if (userInBookshelf) {
+        return res.status(400).json({ message: "User is already in the bookshelf" });
+    }
+    Novel.bookshelf.push(userIdObjectId);
+    await Novel.save();
+    return res.status(200).json({message: "Add to bookshelf successfully"})
+}
+
+export const getChapters = async (req, res) => {
+    const {novelId} = req.body
+    const Novel = await novels.findById(novelId).exec()
+    if (!Novel) {
+        return res.status(400).json({ message: "Novel not found" })
+    }
+    return res.status(200).json(Novel.chapter)
 }
 
 export const createChapter = async (req, res) => {
     const {
-        id,
+        novelId,
         title,
         content
     } = req.body
-    if(!title || !content){
-        return res.status(400).json({message: "Please enter title and content of this chapter!"})
+    if (!title || !content) {
+        return res.status(400).json({ message: "Please enter title and content of this chapter!" })
     }
-    const Novel = await novel.findById(id).exec()
-    if(!Novel){
-        return res.status(400).json({message: "Novel not found"})
+    const Novel = await novels.findById(novelId).exec()
+    if (!Novel) {
+        return res.status(400).json({ message: "Novel not found" })
     }
     Novel.chapter.push({
         title,
         content
     })
-    Novel.save();
-    return res.status(200).json(Novel)
+    await Novel.save();
+    return res.status(200).json(Novel.chapter)
 }
 
+export const editChapter = async (req, res) => {
+    const {
+        novelId,
+        chapterId,
+        title,
+        content
+    } = req.body
+    if (title === '' || content === '') {
+        return res.status(400).json({ message: "Please enter title and content of this chapter!" })
+    }
+    const Novel = await novels.findById(novelId).exec()
+    if (!Novel) {
+        return res.status(400).json({ message: "Novel not found" })
+    }
+    const Chapter = Novel.chapter.find((chapter) => chapter._id == chapterId)
+    if (!Chapter) {
+        return res.status(400).json({ message: "Chapter not found" })
+    }
+    Chapter.title = title
+    Chapter.content = content
+    Chapter.updatedAt = Date.now()
+    await Novel.save()
+    return res.status(200).json(Chapter)
+}
 
+export const deleteChapter = async (req, res) => {
+    const {
+        novelId,
+        chapterId,
+    } = req.body
+    const Novel = await novels.findById(novelId).exec()
+    if (!Novel) {
+        return res.status(400).json({ message: "Novel not found" })
+    }
+    const chapterIndex = Novel.chapter.findIndex((chapter) => chapter._id == chapterId);
+    if (chapterIndex === -1) {
+        return res.status(400).json({ message: "Chapter not found in the novel" });
+    }
+    Novel.chapter.splice(chapterIndex, 1);
+    await Novel.save();
+    return res.status(200).json({ message: "Chapter deleted successfully" });
+}

@@ -23,7 +23,8 @@ const userSchema = new mongoose.Schema({
     },
     dateOfBirth: {
         type: Date,
-    }
+    },
+    follower: [mongoose.Schema.Types.ObjectId],
 })
 
 export default mongoose.model("users", userSchema)

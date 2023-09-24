@@ -2,7 +2,6 @@ import users from "../models/users.js";
 import bcrypt from 'bcrypt'
 import jwt from "jsonwebtoken";
 
-
 export const register = async (req, res) => {
     const {
         username,
@@ -66,8 +65,7 @@ export const login = async (req, res) => {
             "dateOfBirth": foundUser?.dateOfBirth
         }
     },
-    process.env.ACCESS_TOKEN_KEY,
-    {expiresIn: '10m'}
+    process.env.ACCESS_TOKEN_KEY
     )
     res.status(200).json({accessToken})
 }
