@@ -71,7 +71,7 @@ export const getBookshelfByUserId = async (req, res) => {
     return res.status(200).json(Novel)
 }
 
-export const addNovelToBookshelf = async (req, res) => {
+export const addOrRemoveNovelToBookshelf = async (req, res) => {
     const {
         novelId,
         userId
@@ -81,22 +81,53 @@ export const addNovelToBookshelf = async (req, res) => {
         return res.status(400).json({ message: "Novel not found" })
     }
     const userIdObjectId = new mongoose.Types.ObjectId(userId);
-    const userInBookshelf = Novel.bookshelf.some((item) => item.equals(userIdObjectId));
-    if (userInBookshelf) {
-        return res.status(400).json({ message: "User is already in the bookshelf" });
+    const userInBookshelf = Novel.bookshelf.findIndex((item) => item.equals(userIdObjectId));
+    let message;
+    if (userInBookshelf === -1) {
+        Novel.bookshelf.push(userIdObjectId);
+        message = "Add to bookshelf successfully"
+    }else{
+        Novel.bookshelf.splice(userInBookshelf, 1)
+        message = "Remove from the bookshelf successfully"
     }
-    Novel.bookshelf.push(userIdObjectId);
     await Novel.save();
-    return res.status(200).json({message: "Add to bookshelf successfully"})
+    return res.status(200).json({message})
 }
 
 export const getChapters = async (req, res) => {
     const {novelId} = req.body
-    const Novel = await novels.findById(novelId).exec()
+    const Novel = await novels.findById(novelId).populate({
+        path: 'chapter.comments.author',
+        model: 'users',
+        select: '_id username profileImgPath'
+    }).exec()
     if (!Novel) {
         return res.status(400).json({ message: "Novel not found" })
     }
     return res.status(200).json(Novel.chapter)
+}
+
+export const getChapter = async (req, res) => {
+    const {novelId, chapterId, userId} = req.body
+    const Novel = await novels.findById(novelId).populate({
+        path: 'chapter.comments.author',
+        model: 'users',
+        select: '_id username profileImgPath'
+    }).exec()
+    if (!Novel) {
+        return res.status(400).json({ message: "Novel not found" })
+    }
+    const Chapter = Novel.chapter.find((chapter) => chapter._id == chapterId)
+    if (!Chapter) {
+        return res.status(400).json({ message: "Chapter not found" })
+    }
+    const userIdObjectId = new mongoose.Types.ObjectId(userId)
+    const viewChapter = Chapter.views.findIndex((userid) => userid == userId)
+    if(viewChapter === -1){
+        Chapter.views.push(userIdObjectId)
+        await Novel.save()
+    }
+    return res.status(200).json(Chapter)
 }
 
 export const createChapter = async (req, res) => {
@@ -161,4 +192,42 @@ export const deleteChapter = async (req, res) => {
     Novel.chapter.splice(chapterIndex, 1);
     await Novel.save();
     return res.status(200).json({ message: "Chapter deleted successfully" });
+}
+
+export const addOrRemoveLike = async (req, res) => {
+    const {novelId, chapterId, userId} = req.body
+    const Novel = await novels.findById(novelId).exec()
+    if (!Novel) {
+        return res.status(400).json({ message: "Novel not found" })
+    }
+    const Chapter = Novel.chapter.find((chapter) => chapter._id == chapterId)
+    if (!Chapter) {
+        return res.status(400).json({ message: "Chapter not found" })
+    }
+    const findUserLiked = Chapter.like.findIndex((userid) => userid == userId)
+    if(findUserLiked === -1){
+        Chapter.like.push(new mongoose.Types.ObjectId(userId))
+    }else{
+        Chapter.like.splice(findUserLiked, 1)
+    }
+    await Novel.save()
+    return res.status(200).json({message: "Success"})
+}
+
+export const sendComment = async (req, res) => {
+    const {novelId, chapterId, author, comment} = req.body
+    const Novel = await novels.findById(novelId).exec()
+    if (!Novel) {
+        return res.status(400).json({ message: "Novel not found" })
+    }
+    const Chapter = Novel.chapter.find((chapter) => chapter._id == chapterId)
+    if (!Chapter) {
+        return res.status(400).json({ message: "Chapter not found" })
+    }
+    Chapter.comments.push({
+        author,
+        comment
+    })
+    await Novel.save()
+    return res.status(200).json({message: "Success"})
 }
