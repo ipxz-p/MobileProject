@@ -6,6 +6,15 @@ export const getNovels = async (req, res) => {
     return res.status(200).json(Novels)
 }
 
+export const getNovel = async (req, res) => {
+    const {novelId} = req.body
+    const Novel = await novels.findById(novelId).exec()
+    if (!Novel) {
+        return res.status(400).json({ message: 'Novel not found' })
+    }
+    return res.status(200).json(Novel)
+}
+
 export const createNovel = async (req, res) => {
     const {
         owner,
@@ -228,6 +237,68 @@ export const sendComment = async (req, res) => {
         author,
         comment
     })
+    await Novel.save()
+    return res.status(200).json({message: "Success"})
+}
+
+export const editComment = async (req, res) => {
+    const {novelId, chapterId, commentId, comment} = req.body
+    const Novel = await novels.findById(novelId).exec()
+    if (!Novel) {
+        return res.status(400).json({ message: "Novel not found" })
+    }
+    const Chapter = Novel.chapter.find((chapter) => chapter._id == chapterId)
+    if (!Chapter) {
+        return res.status(400).json({ message: "Chapter not found" })
+    }
+    const Comment = Chapter.comments.find((comment) => comment._id == commentId)
+    if(!Comment){
+        return res.status(400).json({ message: "Comment not found" })
+    }
+    Comment.comment = comment
+    await Novel.save()
+    return res.status(200).json({message: "Comment edited successfully"})
+}
+
+export const deleteComment = async (req, res) => {
+    const {novelId, chapterId, commentId} = req.body
+    const Novel = await novels.findById(novelId).exec()
+    if (!Novel) {
+        return res.status(400).json({ message: "Novel not found" })
+    }
+    const Chapter = Novel.chapter.find((chapter) => chapter._id == chapterId)
+    if (!Chapter) {
+        return res.status(400).json({ message: "Chapter not found" })
+    }
+    const CommentIndex = Chapter.comments.findIndex((comment) => comment._id == commentId)
+    if(CommentIndex === -1){
+        return res.status(400).json({ message: "Comment not found" })
+    }
+    Chapter.comments.splice(CommentIndex, 1)
+    await Novel.save()
+    return res.status(200).json({message: "Comment deleted successfully"})
+}
+
+export const addOrRemoveLikeComment = async (req, res) => {
+    const {novelId, chapterId, commentId, userId} = req.body
+    const Novel = await novels.findById(novelId).exec()
+    if (!Novel) {
+        return res.status(400).json({ message: "Novel not found" })
+    }
+    const Chapter = Novel.chapter.find((chapter) => chapter._id == chapterId)
+    if (!Chapter) {
+        return res.status(400).json({ message: "Chapter not found" })
+    }
+    const Comment = Chapter.comments.find((comment) => comment._id == commentId)
+    if(!Comment){
+        return res.status(400).json({ message: "Comment not found" })
+    }
+    const CommentIndex = Comment.like.findIndex((userid) => userid == userId)
+    if(CommentIndex === -1){
+        Comment.like.push(new mongoose.Types.ObjectId(userId))
+    }else{
+        Comment.like.splice(CommentIndex, 1)
+    }
     await Novel.save()
     return res.status(200).json({message: "Success"})
 }
