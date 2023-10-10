@@ -27,6 +27,12 @@ const AddEditChapterScreen = ({route, navigation}) => {
       </LinearGradient>
       
 
+      <LinearGradient  style={{borderRadius: 50, marginTop: 10, marginBottom: 25,   alignSelf: 'center',}} colors={['#FD2C38', '#B0020C']} >
+          <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("")}}>
+            <Text style={{ color: '#fff' }}>ลบตอน</Text>
+          </TouchableOpacity>
+      </LinearGradient>
+
       
 
     
