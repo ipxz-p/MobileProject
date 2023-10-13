@@ -116,8 +116,8 @@ const AddEditWritingScreen = ({route, navigation}) => {
       </LinearGradient>
 
       <LinearGradient  style={{borderRadius: 50, marginTop: 15, marginBottom: 25,  width:150,  alignSelf: 'center',}} colors={['#FD2C38', '#B0020C']} >
-          <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("WritingScreen")}}>
-            <Text style={{ color: '#fff' }}>บันทึก</Text>
+          <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("")}}>
+            <Text style={{ color: '#fff' }}>ลบนิยาย</Text>
           </TouchableOpacity>
       </LinearGradient>
      
