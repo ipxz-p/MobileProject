@@ -10,23 +10,25 @@ const novelSchema = new mongoose.Schema({
     },
     images: {
         type: String,
-        required: true
     },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'users',
         required: true
     },
-    like: [String],
-    views: [String],
-    bookshelf: [String],
+    like: [mongoose.Schema.Types.ObjectId],
+    views: [mongoose.Schema.Types.ObjectId],
     chapter: [{
         title: {
             type: String,
             required: true
         },
-        like: [String],
-        views: [String],
+        content: {
+            type: String,
+            required: true
+        },
+        like: [mongoose.Schema.Types.ObjectId],
+        views: [mongoose.Schema.Types.ObjectId],
         comments: [{
             comment: {
                 type: String,
@@ -37,7 +39,7 @@ const novelSchema = new mongoose.Schema({
                 ref: 'users',
                 required: true
             },
-            like: [String],
+            like: [mongoose.Schema.Types.ObjectId],
             date: {
                 type: Date,
                 default: Date.now
@@ -51,6 +53,14 @@ const novelSchema = new mongoose.Schema({
             type: Date,
             default: Date.now
         }
-    }]
+    }],
+    category: {
+        type: String,
+        required: true
+    },
+    bookshelf: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'users',
+    }],
 })
-export default mongoose.model("novel", novelSchema)
+export default mongoose.model("novels", novelSchema)
