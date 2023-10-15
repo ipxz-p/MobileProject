@@ -6,9 +6,16 @@ import React from 'react'
 const handleHead = ({tintColor}) => <Text style={{color: tintColor}}>H1</Text>
 const ContentChpaterScreen = ({route, navigation}) => {
   const richText = React.useRef();
+  const handleEditorChange = (text) => {
+    // Log the text whenever it changes
+    console.log("Editor Content:", text);
+  }
   return (
     
-      <SafeAreaView >
+      <SafeAreaView style={{backgroundColor: 'white', height: '100%' }}>
+      {/* <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("WritingScreen")}}>
+            <Text style={{ color: '#fff' }}>บันทึก</Text>
+          </TouchableOpacity> */}
         
         <RichToolbar style={{color: 'white'}}
         editor={richText}
@@ -20,13 +27,12 @@ const ContentChpaterScreen = ({route, navigation}) => {
         
           <RichEditor 
               ref={richText}
+              onChange={handleEditorChange}
               
           />
           
         </KeyboardAvoidingView>
-       <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("WritingScreen")}}>
-            <Text style={{ color: '#fff' }}>บันทึก</Text>
-          </TouchableOpacity>
+       
       </ScrollView>
     
        
@@ -42,12 +48,12 @@ const styles = StyleSheet.create({
     width: 100,
     height: 40,
     alignItems: 'center',
-    alignSelf: 'center',
     padding: 10,
-    borderRadius: 50,
+    borderRadius: 10,
     backgroundColor: "#5752C9",
     marginTop: 20,
-    marginBottom: 65,
+    marginRight: 20,
+    alignSelf: 'flex-end'
     
   },
 

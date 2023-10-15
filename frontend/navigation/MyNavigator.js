@@ -191,13 +191,17 @@ function FollowsNavigator(){
 }
 
 // <<Bae>> Writing Navigator
-function WritingNavigator(){
+function WritingNavigator({route, navigation}){
+
   return (
     <WriteNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
-      <WriteNavigator.Screen name="WritingScreen" options={{title:"Writing"}} component={WritingScreen} />
+      <WriteNavigator.Screen name="WritingScreens" options={{title:"Writing"}} component={WritingScreen} />
       <WriteNavigator.Screen name="AddEditWritingScreen" options={{title:"สร้างนิยาย", headerBackTitleVisible: false}} component={AddEditWritingScreen} />
       <WriteNavigator.Screen name="AddEditChapterScreen" options={{title:"สร้างตอน", headerBackTitleVisible: false}} component={AddEditChapterScreen} />
-      <WriteNavigator.Screen name="ContentChpaterScreen" options={{title:"สร้างเนื้อความ", headerBackTitleVisible: false}} component={ContentChpaterScreen} />
+      <WriteNavigator.Screen name="ContentChpaterScreen" options={{title:"สร้างเนื้อความ", headerBackTitleVisible: false, 
+      headerRight: () => (
+      <TouchableOpacity onPress={() => navigation.navigate("WritingScreens")}><Text style={{color: 'white'}}>บันทึก</Text></TouchableOpacity>)
+      }} component={ContentChpaterScreen} />
     </WriteNavigator.Navigator>
   )
 }
