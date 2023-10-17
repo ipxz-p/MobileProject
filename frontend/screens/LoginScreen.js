@@ -1,8 +1,51 @@
 import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput} from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
-import React from 'react'
+import React , { useState } from 'react'
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import axios  from 'axios';
 
 const LoginScreen = ({route, navigation}) => {
+  const [showPassword, setShowPassword] = useState(false); 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+
+  const toggleShowPassword = () => { 
+    setShowPassword(!showPassword); 
+  }
+
+  const onChangeEmailHandler = (email) => {
+    setEmail(email)
+  }
+
+const onChangePasswordHandler = (password) => {
+  setPassword(password)
+  }
+  const onSubmitFormHandler = async () => {
+    try {
+      const response = await axios.post('http://10.0.2.2:3500/auth/login', { 
+        email, 
+        password 
+      });
+      
+      if (response.status === 200){
+        AsyncStorage.removeItem('token');
+        AsyncStorage.setItem('token', response.data.accessToken);
+        const dataToken = await AsyncStorage.getItem('token');
+        if (dataToken) {
+           navigation.navigate('ProfileScreen');
+          alert('เข้าสู่ระบบเรียบร้อยแล้ว')
+        }
+        console.log('เข้าแล้ว')
+   
+      }
+      
+    } catch (error) {
+      alert('เกิดข้อผิดพลาดในการเข้าสู่ระบบ: ' + error);
+      
+    }
+  }
+
   return (
     <View style={styles.bigView}>
       <Text style={{fontSize: 25, fontWeight: 'bold', marginBottom: 8,}}>เข้าสู่ระบบ</Text>
@@ -10,12 +53,15 @@ const LoginScreen = ({route, navigation}) => {
 
       
 
-      <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 45, borderColor: '#dcdcdc', padding: 10, fontSize: 16, marginBottom: 20,}}  placeholder="อีเมลล์"></TextInput>
+      <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 45, borderColor: '#dcdcdc', padding: 10, fontSize: 16, marginBottom: 20,}}  keyboardType="email-address" value={email} onChangeText={onChangeEmailHandler} placeholder="อีเมลล์"></TextInput>
 
-      <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 45, borderColor: '#dcdcdc', padding: 10, fontSize: 16 }} placeholder="รหัสผ่าน"></TextInput>
+      <View style={styles.con_password}> 
+                <TextInput secureTextEntry={!showPassword}   style={styles.input} value={password} onChangeText={onChangePasswordHandler} placeholder="รหัสผ่าน"/> 
+                <MaterialCommunityIcons name={showPassword ? 'eye' : 'eye-off'} size={22} color="#aaa" style={styles.icon} onPress={toggleShowPassword}/> 
+      </View> 
 
       <LinearGradient  style={{borderRadius: 5, marginTop: 35, marginBottom: 9}} colors={['#FBBC2C', '#FE8F7C']} >
-        <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("ProfileScreen")}}>
+        <TouchableOpacity style={styles.addButton} onPress={onSubmitFormHandler}>
           <Text style={{ color: '#fff', fontSize: 18, }}>เข้าสู่ระบบ</Text>
         </TouchableOpacity>
       </LinearGradient>
@@ -41,9 +87,6 @@ const styles = StyleSheet.create({
     marginTop: 100,
     marginHorizontal: 40,
 
-    // backgroundColor: '#4a148c',
-    // flex: 10,
-
   },
   addButton:{
     width: 318,
@@ -53,7 +96,27 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     padding: 10,
     
-  }
+  },
+  con_password: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    backgroundColor: '#f3f3f3', 
+    borderRadius: 5, 
+    paddingHorizontal: 10, 
+    borderColor: '#dcdcdc',
+    borderWidth: 1,
+}, 
+input: { 
+    flex: 1, 
+    color: '#333', 
+    paddingVertical: 7, 
+    paddingRight: 10, 
+    fontSize: 16, 
+}, 
+icon: { 
+    marginLeft: 10, 
+}, 
 
 })
 

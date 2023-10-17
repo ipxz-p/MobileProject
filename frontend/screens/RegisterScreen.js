@@ -2,6 +2,7 @@ import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput} from 'react
 import { LinearGradient } from 'expo-linear-gradient';
 import React , { useState } from 'react'
 import axios from 'axios'
+import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 
 const RegisterScreen = ({route, navigation}) => {
 
@@ -9,6 +10,8 @@ const RegisterScreen = ({route, navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  // เอาไว้ทำกดซ่อนไม่ซ่อน password
+  const [showPassword, setShowPassword] = useState(false); 
 
 
   const onChangeUsernameHandler = (username) => {
@@ -23,8 +26,13 @@ const RegisterScreen = ({route, navigation}) => {
     setPassword(password)
   }
 
+  const toggleShowPassword = () => { 
+    setShowPassword(!showPassword); 
+}; 
+
   const onSubmitFormHandler = async (event) => {
     setIsLoading(true);
+
 
     if (!username.trim()) {
       alert("กรุณากรอกชื่อผู้ใช้");
@@ -51,7 +59,8 @@ const RegisterScreen = ({route, navigation}) => {
         setUsername('');
         setEmail('');
         setPassword('');
-        navigation.navigate('ProfileScreen');
+        navigation.navigate('LoginScreen');
+        console.log('สมัครเสร็จแล้ว')
       } 
       else {
         throw new Error("An error has occurred");
@@ -73,7 +82,12 @@ const RegisterScreen = ({route, navigation}) => {
 
       <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 45, borderColor: '#dcdcdc', padding: 10, fontSize: 16, marginBottom: 20,}}  keyboardType="email-address" placeholder="อีเมลล์" value={email} onChangeText={onChangeEmailHandler}></TextInput>
 
-      <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 45, borderColor: '#dcdcdc', padding: 10, fontSize: 16, marginBottom: 20,}} secureTextEntry={true} placeholder="รหัสผ่าน" value={password} onChangeText={onChangePasswordHandler}></TextInput>
+
+      <View style={styles.con_password}> 
+                <TextInput secureTextEntry={!showPassword} value={password} onChangeText={onChangePasswordHandler} style={styles.input} placeholder="รหัสผ่าน"/> 
+                <MaterialCommunityIcons name={showPassword ? 'eye' : 'eye-off'} size={22} color="#aaa" style={styles.icon} onPress={toggleShowPassword}/> 
+      </View> 
+      
 
       <LinearGradient  style={{borderRadius: 5, marginTop: 12, marginBottom: 5}} colors={['#FBBC2C', '#FE8F7C']} >
         <TouchableOpacity style={styles.addButton} onPress={onSubmitFormHandler}>
@@ -113,7 +127,27 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     padding: 10,
     
-  }
+  },
+  con_password: { 
+    flexDirection: 'row', 
+    alignItems: 'center', 
+    justifyContent: 'center', 
+    backgroundColor: '#f3f3f3', 
+    borderRadius: 5, 
+    paddingHorizontal: 10, 
+    borderColor: '#dcdcdc',
+    borderWidth: 1,
+}, 
+input: { 
+    flex: 1, 
+    color: '#333', 
+    paddingVertical: 7, 
+    paddingRight: 10, 
+    fontSize: 16, 
+}, 
+icon: { 
+    marginLeft: 10, 
+}, 
 
 })
 
