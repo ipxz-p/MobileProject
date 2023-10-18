@@ -36,7 +36,6 @@ const onChangePasswordHandler = (password) => {
            navigation.navigate('ProfileScreen');
           alert('เข้าสู่ระบบเรียบร้อยแล้ว')
         }
-        console.log('เข้าแล้ว')
    
       }
       

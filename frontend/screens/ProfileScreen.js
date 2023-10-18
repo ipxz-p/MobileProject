@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, Pressable, Platform} from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, Pressable, Platform, TouchableWithoutFeedback} from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import React , { useState} from 'react'
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -6,45 +6,46 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import { useFocusEffect } from '@react-navigation/native';
+import { MaterialIcons} from "@expo/vector-icons";
+
 
 const ProfileScreen = ({route, navigation}) => {
 
   const [date, setDate] = useState(new Date());
-  const [bday, setBday] = useState(null);
+  const [dateOfBirth, setdateOfBirth] = useState(null);
   const [showPicker, setShowPicker] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [id, setId] = useState(null);
-  // const [password, setPassword] = useState('');
+  const [userId, setUserId] = useState('');
+  const [token, setToken] = useState('');
+
  
-  
   useFocusEffect(
-    React.useCallback(() => {
-      const fetchDataByToken = async () => {
-        try {
-          const dataToken = await AsyncStorage.getItem('token');
-          const decodeToken = jwtDecode(dataToken);
-          console.log(decodeToken.UserInfo.id)
-          setId(decodeToken.UserInfo.id)
-          setUsername(decodeToken.UserInfo.username);
-          setEmail(decodeToken.UserInfo.email);
-          setBday(decodeToken.UserInfo.dateOfBirth)
-        } catch (error) {
-          // จัดการข้อผิดพลาด
-        }
-      };
-      fetchDataByToken();
+      React.useCallback(() => {
+        const fetchDataByToken = async () => {
+          try {
+            const dataToken = await AsyncStorage.getItem('token');
+            setToken(dataToken);
+            const decodeToken = jwtDecode(dataToken);
+            setUserId(decodeToken.UserInfo.id);
+            setUsername(decodeToken.UserInfo.username);
+            setEmail(decodeToken.UserInfo.email);
+            const bday = decodeToken.UserInfo.dateOfBirth.toDateString();
+            setdateOfBirth(bday);
+          } catch (error) {
+            // จัดการข้อผิดพลาด
+          }
+        };
+        fetchDataByToken();
+  
     }, [])
   );
-
-    
 
   const onLogout = async () => {
     const dataToken = await AsyncStorage.removeItem('token');
     if (!dataToken){
       navigation.navigate('LoginScreen')
       alert('ออกจากระบบเรียบร้อยแล้ว')
-      
   }
 }
 
@@ -59,7 +60,7 @@ const ProfileScreen = ({route, navigation}) => {
 
       if (Platform.OS === 'android'){
         toggleDatepicker();
-        setBday(currentDate.toDateString());
+        setdateOfBirth(currentDate.toDateString());
        
       }
       else {
@@ -71,55 +72,62 @@ const ProfileScreen = ({route, navigation}) => {
     }
   }
 
-  // const formatDate = (rawDate) => {
-  //   let date = new Date(rawDate);
-  //   let year = date.getFullYear();
-  //   let month = date.getMonth() + 1;
-  //   let day = date.getDate();
-
-  //   return `${day}-${month}-${year}`;
-
-  // }
+  const updateToken = async () => {
+    try {
+      const response = await axios.get('http://10.0.2.2:3500/auth/refresh', {
+        params: {
+          token: token
+            },
+      });
+      if (response.status === 200){
+        await AsyncStorage.setItem('token', response.data.accessToken)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const updateUser = async () => {
     try {
-      const dataToken = await AsyncStorage.getItem('token');
-      const decodeToken = jwtDecode(dataToken);
-      setId(decodeToken.UserInfo.id)
       const response = await axios.put('http://10.0.2.2:3500/user/updateUser', { 
-        id
+        userId,
+        username,
+        email,
+        dateOfBirth
       });
       if (response.status === 200){
-        alert("put")
-   
-      }
-
+        await updateToken();
+        alert('บันทึกข้อมูลเรียบร้อยแล้ว')
+         }
     }
     catch (error) {
       console.log('เกิดข้อผิดพลาดในการ put  ' + error);
     }
   }
 
+
+
   return (
     <View>
 
       <View style={styles.view}>
-
-      <Image style={{height: 120, width: 120, resizeMode: 'contain', borderRadius: 100, alignSelf: 'center',}} source={{ uri: 'https://media.discordapp.net/attachments/1122166608937361559/1151920737851023380/e06af846317f4cc3b0e64ac9b5e8f53a.png?width=701&height=701'}}></Image>
       
+      <TouchableWithoutFeedback onPress={uploadImage}>
+        <View>
+          <Image style={{height: 150, width: 150, resizeMode: 'contain', borderRadius: 100, alignSelf: 'center', borderColor: '#C0C0C0', borderWidth: 4}} source={{ uri: 'https://media.discordapp.net/attachments/1122166608937361559/1164268361560109126/avatar-3814049_1280.png?ex=65429868&is=65302368&hm=e0a94bcdf076b9720589706e6b2122f036b725492ad1f5b0de094d85ada72fea&=&width=701&height=701'}}></Image>
+          <View style={{height: 35, width: 35, position: "absolute", bottom: 0, right: 87, zIndex: 9999, backgroundColor: '#C0C0C0', borderRadius:20 }}>
+            <MaterialIcons style={{alignSelf: 'center', marginTop: 5}} name="photo-camera" size={25} color={'white'}/>
+          </View>
+        </View>
+      </TouchableWithoutFeedback>
 
       <Text style={{alignSelf: 'flex-start', fontWeight: 'bold', fontSize: 17, marginBottom: 8, marginTop: 10,}}>ชื่อ</Text>
-
 
       <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 42, borderColor: '#dcdcdc', padding: 8, fontSize: 17, marginBottom: 20,}}   placeholder="ชื่อ" value={username} onChangeText={(username) => setUsername(username)}></TextInput>
 
       <Text style={{alignSelf: 'flex-start', fontWeight: 'bold', fontSize: 17, marginBottom: 8,}}>อีเมลล์</Text>
 
       <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 42, borderColor: '#dcdcdc', padding: 8, fontSize: 17, marginBottom: 20,}}  placeholder="email@example.com" value={email} onChangeText={(email) => setEmail(email)}></TextInput>
-      
-      {/* <Text style={{alignSelf: 'flex-start', fontWeight: 'bold', fontSize: 17, marginBottom: 8,}}>รหัสผ่าน</Text>
-
-      <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 42, borderColor: '#dcdcdc', padding: 8, fontSize: 17, marginBottom: 20,}}  placeholder="รหัสผ่านใหม่ที่ต้องการเปลี่ยน"  onChangeText={(password) => setPassword(password)}></TextInput> */}
       
       <Text style={{alignSelf: 'flex-start', fontWeight: 'bold', fontSize: 17, marginBottom: 8,}}>วัน/เดือน/ปี เกิด</Text>
       
@@ -129,7 +137,7 @@ const ProfileScreen = ({route, navigation}) => {
 
       {!showPicker && (
         <Pressable onPress={toggleDatepicker}>
-        <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 42, borderColor: '#dcdcdc', padding: 8, fontSize: 17, marginBottom: 20, color: 'black'}}  placeholder="dd/mm/yyyy" value={bday} editable={false} onChange={(date) => setBday(date)}></TextInput>
+        <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 42, borderColor: '#dcdcdc', padding: 8, fontSize: 17, marginBottom: 20, color: 'black'}}  placeholder="dd/mm/yyyy" value={dateOfBirth} editable={false} onChange={(date) => setdateOfBirth(date)}></TextInput>
       </Pressable>
       )}
 
