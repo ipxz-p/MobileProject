@@ -12,7 +12,7 @@ import { MaterialIcons} from "@expo/vector-icons";
 const ProfileScreen = ({route, navigation}) => {
 
   const [date, setDate] = useState(new Date());
-  const [dateOfBirth, setdateOfBirth] = useState(null);
+  const [dateOfBirth, setdateOfBirth] = useState('');
   const [showPicker, setShowPicker] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -30,8 +30,7 @@ const ProfileScreen = ({route, navigation}) => {
             setUserId(decodeToken.UserInfo.id);
             setUsername(decodeToken.UserInfo.username);
             setEmail(decodeToken.UserInfo.email);
-            const bday = decodeToken.UserInfo.dateOfBirth.toDateString();
-            setdateOfBirth(bday);
+            setdateOfBirth(decodeToken.UserInfo.dateOfBirth.toDateString());
           } catch (error) {
             // จัดการข้อผิดพลาด
           }
