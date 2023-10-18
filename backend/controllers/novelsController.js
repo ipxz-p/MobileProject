@@ -2,13 +2,21 @@ import mongoose, { isValidObjectId } from "mongoose"
 import novels from "../models/novels.js"
 
 export const getNovels = async (req, res) => {
-    const Novels = await novels.find().exec()
+    const Novels = await novels.find().populate({
+        path: 'owner',
+        model: 'users',
+        select: '_id username profileImgPath'
+    }).exec()
     return res.status(200).json(Novels)
 }
 
 export const getNovel = async (req, res) => {
     const {novelId} = req.body
-    const Novel = await novels.findById(novelId).exec()
+    const Novel = await novels.findById(novelId).populate({
+        path: 'owner',
+        model: 'users',
+        select: '_id username profileImgPath'
+    }).exec()
     if (!Novel) {
         return res.status(400).json({ message: 'Novel not found' })
     }
