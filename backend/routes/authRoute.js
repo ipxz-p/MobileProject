@@ -56,8 +56,8 @@ router.post("/register", register)
 router.post("/login", login)
 /**
  * @openapi
- * /auth/login:
- *  post:
+ * /auth/refresh:
+ *  get:
  *     tags:
  *     - auth
  *     description: get new token
