@@ -1,6 +1,7 @@
 import express from 'express';
 import { 
     login,
+    refresh,
     register 
 } from '../controllers/authController.js';
 
@@ -53,5 +54,23 @@ router.post("/register", register)
  *       
  */
 router.post("/login", login)
+/**
+ * @openapi
+ * /auth/login:
+ *  post:
+ *     tags:
+ *     - auth
+ *     description: get new token
+ *     parameters:
+ *      - name: token
+ *        in: body
+ *        description: token
+ *        required: true
+ *     responses:
+ *       200:
+ *         description: return access token
+ *       
+ */
+router.get("/refresh", refresh)
 
 export default router
