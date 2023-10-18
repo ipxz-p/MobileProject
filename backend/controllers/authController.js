@@ -77,7 +77,7 @@ export const refresh = async (req, res) => {
         process.env.ACCESS_TOKEN_KEY,
         async (err, decoded) => {
             if(err)  return res.status(403).json({ message: 'Forbidden' })
-            const foundUser = await users.findOne({email: decoded.UserInfo.email}).exec()
+            const foundUser = await users.findOne({_id: decoded.UserInfo.id}).exec()
             if(!foundUser) return res.status(401).json({ message: 'Unauthorized' })
             const accessToken = jwt.sign(
                 {
