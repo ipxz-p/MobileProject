@@ -2,7 +2,7 @@ import mongoose, { isValidObjectId } from "mongoose";
 import users from "../models/users.js"
 
 export const getUser = async (req, res) => {
-    const { userId } = req.body;
+    const  userId = req.query.userId;
     const User = await users.findById(userId).select("-password")
     if(!User) return res.status(200).json({message: "User not found"})
     return res.status(200).json(User);
@@ -14,7 +14,7 @@ export const getAllUser = async (req, res) => {
 }
 
 export const getAuthorFollower = async (req, res) => {
-    const {userId} = req.body
+    const userId = req.query.userId
     const User = await users.find({follower: userId}).select("-password").exec()
     return res.status(200).json(User);
 }
