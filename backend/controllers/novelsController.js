@@ -11,7 +11,7 @@ export const getNovels = async (req, res) => {
 }
 
 export const getNovel = async (req, res) => {
-    const {novelId} = req.body
+    const novelId = req.query.novelId
     const Novel = await novels.findById(novelId).populate({
         path: 'owner',
         model: 'users',
@@ -81,9 +81,7 @@ export const deleteNovel = async (req, res) => {
 }
 
 export const getBookshelfByUserId = async (req, res) => {
-    const {
-        userId
-    } = req.body
+    const userId = req.query.userId
     const Novel = await novels.find({bookshelf: { $in: [userId] }}).exec()
     return res.status(200).json(Novel)
 }
@@ -112,7 +110,7 @@ export const addOrRemoveNovelToBookshelf = async (req, res) => {
 }
 
 export const getChapters = async (req, res) => {
-    const {novelId} = req.body
+    const novelId = req.query.novelId
     const Novel = await novels.findById(novelId).populate({
         path: 'chapter.comments.author',
         model: 'users',
@@ -125,7 +123,9 @@ export const getChapters = async (req, res) => {
 }
 
 export const getChapter = async (req, res) => {
-    const {novelId, chapterId, userId} = req.body
+    const novelId = req.query.novelId
+    const chapterId = req.query.chapterId
+    const userId = req.query.userId
     const Novel = await novels.findById(novelId).populate({
         path: 'chapter.comments.author',
         model: 'users',

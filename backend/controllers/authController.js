@@ -70,3 +70,29 @@ export const login = async (req, res) => {
     res.status(200).json({accessToken})
 }
 
+export const refresh = async (req, res) => {
+    const token = req.query.token
+    jwt.verify(
+        token,
+        process.env.ACCESS_TOKEN_KEY,
+        async (err, decoded) => {
+            if(err)  return res.status(403).json({ message: 'Forbidden' })
+            const foundUser = await users.findOne({_id: decoded.UserInfo.id}).exec()
+            if(!foundUser) return res.status(401).json({ message: 'Unauthorized' })
+            const accessToken = jwt.sign(
+                {
+                    "UserInfo": {
+                        "id": foundUser._id,
+                        "username": foundUser.username,
+                        "email": foundUser.email,
+                        "roles": foundUser.roles,
+                        "profileImgPath": foundUser.profileImgPath,
+                        "dateOfBirth": foundUser?.dateOfBirth
+                    }
+                },
+                process.env.ACCESS_TOKEN_KEY
+            )
+            res.json({ accessToken })
+        }
+    )
+}
