@@ -112,7 +112,7 @@ const ProfileScreen = ({route, navigation}) => {
 
       <View style={styles.view}>
       
-      <TouchableWithoutFeedback onPress={uploadImage}>
+      <TouchableWithoutFeedback>
         <View>
           <Image style={{height: 150, width: 150, resizeMode: 'contain', borderRadius: 100, alignSelf: 'center', borderColor: '#C0C0C0', borderWidth: 4}} source={{ uri: 'https://media.discordapp.net/attachments/1122166608937361559/1164268361560109126/avatar-3814049_1280.png?ex=65429868&is=65302368&hm=e0a94bcdf076b9720589706e6b2122f036b725492ad1f5b0de094d85ada72fea&=&width=701&height=701'}}></Image>
           <View style={{height: 35, width: 35, position: "absolute", bottom: 0, right: 87, zIndex: 9999, backgroundColor: '#C0C0C0', borderRadius:20 }}>
