@@ -71,7 +71,7 @@ export const login = async (req, res) => {
 }
 
 export const refresh = async (req, res) => {
-    const token = req.query.novelId
+    const token = req.query.token
     jwt.verify(
         token,
         process.env.ACCESS_TOKEN_KEY,
