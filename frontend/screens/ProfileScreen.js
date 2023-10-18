@@ -30,7 +30,7 @@ const ProfileScreen = ({route, navigation}) => {
             setUserId(decodeToken.UserInfo.id);
             setUsername(decodeToken.UserInfo.username);
             setEmail(decodeToken.UserInfo.email);
-            setdateOfBirth(decodeToken.UserInfo.dateOfBirth.toDateString());
+            setdateOfBirth(decodeToken.UserInfo.dateOfBirth);
           } catch (error) {
             // จัดการข้อผิดพลาด
           }
@@ -136,7 +136,7 @@ const ProfileScreen = ({route, navigation}) => {
 
       {!showPicker && (
         <Pressable onPress={toggleDatepicker}>
-        <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 42, borderColor: '#dcdcdc', padding: 8, fontSize: 17, marginBottom: 20, color: 'black'}}  placeholder="dd/mm/yyyy" value={dateOfBirth} editable={false} onChange={(date) => setdateOfBirth(date)}></TextInput>
+        <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 42, borderColor: '#dcdcdc', padding: 8, fontSize: 17, marginBottom: 20, color: 'black'}}  placeholder="dd/mm/yyyy" value={dateOfBirth} editable={false} onChangetext={(date) => setdateOfBirth(date)}></TextInput>
       </Pressable>
       )}
 
