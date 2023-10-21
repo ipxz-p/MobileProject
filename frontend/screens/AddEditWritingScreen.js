@@ -26,9 +26,15 @@ const AddEditWritingScreen = ({route, navigation}) => {
   const [itemDescription, setItemDes] = useState('');
   const [itemCategory, setItemCategory] = useState('');
 
+  useFocusEffect(
+    React.useCallback(() => { 
+      setOwner(userId);
+      setNovelId(novelFromUserId);
+  })
+);
+
   useEffect(() => {
-    setOwner(userId);
-    setNovelId(novelFromUserId);
+
     const getNovelByUserId = async () => {
     const data = await axios.get('http://10.0.2.2:3500/novel/getNovels');
     const dataArray = Object.values(data.data);
@@ -243,7 +249,7 @@ const renderNovelFromUserId = ({ item }) => {
   />
     ) : (
   // สำหรับคนที่ไม่เคยสร้างนิยายมาก่อนนน กับคนที่มีนิยายแล้วแต่สร้างใหม่
-  <ScrollView>
+  <View>
     <View style={styles.view}>
       <Text style={{alignSelf: 'flex-start', fontWeight: 'bold', fontSize: 19, marginBottom: 20,}}>รูปภาพหน้าปก</Text>
       <Image style={{height:190, width: 190, resizeMode: 'contain', borderRadius: 10, alignSelf: 'center'}} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}}></Image>
@@ -264,7 +270,7 @@ const renderNovelFromUserId = ({ item }) => {
         </TouchableOpacity>
       </LinearGradient>
     </View>
-  </ScrollView>
+  </View>
 )}
     </View>
   )}

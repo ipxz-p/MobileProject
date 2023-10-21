@@ -32,6 +32,7 @@ const ProfileScreen = ({route, navigation}) => {
             setToken(dataToken);
             const decodeToken = jwtDecode(dataToken);
             setUserId(decodeToken.UserInfo.id);
+            dispatch(changeUserId(decodeToken.UserInfo.id));
             setUsername(decodeToken.UserInfo.username);
             setEmail(decodeToken.UserInfo.email);
             setdateOfBirth(decodeToken.UserInfo.dateOfBirth);
@@ -40,7 +41,7 @@ const ProfileScreen = ({route, navigation}) => {
           }
         };
         fetchDataByToken();
-        dispatch(changeUserId(userId));
+        
   
     }, [])
   );
