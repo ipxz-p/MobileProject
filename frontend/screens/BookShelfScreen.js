@@ -1,13 +1,33 @@
-import { StyleSheet, View, Text, TouchableOpacity, Image, TouchableHighlight, ScrollView} from 'react-native'
-import React from 'react'
+import { StyleSheet, View, Text, TouchableOpacity, Image, TouchableHighlight, ScrollView, FlatList, Button} from 'react-native'
+import React, {useEffect, useState} from 'react'
 import { Ionicons, Octicons, MaterialCommunityIcons , FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
+import axios from "axios";
+
 const BookShelfScreen = ({route, navigation}) => {
 
-  return (
-    <View>
-      <ScrollView>
-        <View style={styles.myFiction}>
+  const [Novel, setNovel] = useState([]);
+  
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get("http://10.0.2.2:3500/novel/getBookshelfByUserId", {
+          params: {
+            userId: "6507fbc03aaf2d233f5008a0"
+          }
+        })
+        setNovel(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchData(); // Call the async function
+  }, []);
+
+  const renderNovel = ({ item }) => {
+    return (
+      <View style={{flexDirection: 'column'}}>
+          <View style={styles.myFiction}>
     {/* กล่องนิยายแต่ละเรื่อง*/}
       {/* รูปปกนิยายและข้อมูลนิยาย */}
         <View style={styles.view1}>
@@ -19,23 +39,23 @@ const BookShelfScreen = ({route, navigation}) => {
           {/* ข้อมูลนิยาย */}
           <View>
             {/* ชื่อนิยาย */}
-            <Text style={{fontWeight: '400', fontSize: 16, marginBottom: 10,}}>รักเธอที่สุด นายมาเฟีย</Text>
+            <Text style={{fontWeight: '400', fontSize: 16, marginBottom: 10,}}>{item.title}</Text>
             {/* อิโมจิและชื่อนักเขียน */}
             <View style={styles.view1_2}>
               {/* อิโมจิ */}
               <Octicons style={{marginRight: 12}} name="person-fill" size={17} color="#909090" /> 
               {/* ชื่อนักเขียน */}
-              <Text style={{ fontSize: 14, color: '#909090'}}>ingfah bbibbi</Text>
+              <Text style={{ fontSize: 14, color: '#909090'}}>{item.owner}</Text>
             </View>
             {/* จำนวนคนดู  กดหัวใจ ปุ่มอ่านเลย */}
             <View style={styles.view1_3}>
               <View style={{flexDirection: 'row'}}>
                 {/* จำนวนคนดู */}
                 <Ionicons style={{marginRight: 2, marginTop: 1}} name="eye" size={17} color="#909090" />
-                <Text style={{ fontSize: 14, color: '#7B7D7D', marginRight: 8, marginTop: 1}}>12.2k</Text>
+                <Text style={{ fontSize: 14, color: '#7B7D7D', marginRight: 8, marginTop: 1}}>{item.views.length}</Text>
                 {/* จำนวนคนกดหัวใจ */}
                 <FontAwesome style={{marginRight: 2 , marginTop: 2,}} name="heart" size={15} color="#909090" />
-                <Text style={{ fontSize: 14, color: '#7B7D7D', marginRight: 8, marginTop: 1}}>521</Text>
+                <Text style={{ fontSize: 14, color: '#7B7D7D', marginRight: 8, marginTop: 1}}>{item.like.length}</Text>
               </View>
               
               {/* ปุ่มอ่านเลย */}
@@ -49,6 +69,22 @@ const BookShelfScreen = ({route, navigation}) => {
           </View>
         </View>
         </View>
+        
+      </View>
+    )
+  }
+
+  return (
+    <View>
+      <ScrollView>
+
+        <FlatList
+          data={Novel}
+          renderItem={renderNovel}
+          keyExtractor={(item) => item._id}
+          />
+        
+        
   </ScrollView>
       {/* <Button
         title="อ่านเลย"

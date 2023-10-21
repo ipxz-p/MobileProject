@@ -2,8 +2,9 @@ import { View, Text, Button, StyleSheet, ScrollView, Image, Animated, TouchableO
 import React, { useState, useEffect  } from 'react'
 import { AntDesign, Ionicons, FontAwesome  } from '@expo/vector-icons'; 
 import 'react-native-gesture-handler';
+import { useSelector } from 'react-redux';
 const IndexFiction = ({route, navigation}) => {
-
+  const novelId = useSelector((state) => state.params.novelId);
   return (
     <View>
        <Image style={styles.titleimage} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}} />
@@ -13,7 +14,7 @@ const IndexFiction = ({route, navigation}) => {
         {/* เนื้อหานิยาย */}
         <View style={{backgroundColor: '#fff', borderRadius: 20}}>
           {/* ชื่อเรื่อง */}
-          <Text style={{fontSize: 20, fontWeight: 'bold', margin: 10}}>รักเธอที่สุด นายมาเฟีย</Text>
+          <Text style={{fontSize: 20, fontWeight: 'bold', margin: 10}}>{novelId}qwe</Text>
           {/* นักเขียน */}
           <View style={{fontSize: 17, fontWeight: 'bold', marginLeft: 10, marginTop: 0, marginBottom: 5, flexDirection: 'row', alignItems: 'center'}}>
             <Text style={{marginRight: 10}}>by ingfah bbibbi</Text>
@@ -61,7 +62,7 @@ const IndexFiction = ({route, navigation}) => {
             <TouchableOpacity onPress={() => { navigation.navigate("ChapterFiction") }}>
           <View style={{padding: 10, borderColor: '#dcdcdc', borderWidth: 1,}}>
             <Text style={{ fontSize: 18, marginLeft: 2}}>#1</Text>
-            <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 4}}>Chapter 1 แต่งงานกันนะไอต้าว</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 4}}>ตอนที่ 1 แต่งงานกันนะไอต้าว</Text>
             {/* 3icon 3text bottom */}
             <View style={{flexDirection: 'row'}}>
               <View style={{flexDirection: 'row', alignItems: 'center' , marginRight: 30, marginLeft: 4, marginBottom: 5, marginTop: 5, }}>
@@ -81,12 +82,12 @@ const IndexFiction = ({route, navigation}) => {
             </View>
           </View>
           </TouchableOpacity>
-          {/* End Box Chapter */}
+          {/* End Box ตอนที่ */}
           {/* HARDCODEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE */}
-          {/* Box Chapter */}
+          {/* Box ตอนที่ */}
           <View style={{padding: 10, borderColor: '#dcdcdc', borderWidth: 1,}}>
             <Text style={{ fontSize: 18, marginLeft: 2}}>#2</Text>
-            <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 4}}>Chapter 2 เลิกกันเถอะ</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 4}}>ตอนที่ 2 เลิกกันเถอะ</Text>
             {/* 3icon 3text bottom */}
             <View style={{flexDirection: 'row'}}>
               <View style={{flexDirection: 'row', alignItems: 'center' , marginRight: 30, marginLeft: 4, marginBottom: 5, marginTop: 5, }}>
@@ -105,11 +106,11 @@ const IndexFiction = ({route, navigation}) => {
               </View>
             </View>
           </View>
-          {/* End Box Chapter */}
-          {/* Box Chapter */}
+          {/* End Box ตอนที่ */}
+          {/* Box ตอนที่ */}
           <View style={{padding: 10, borderColor: '#dcdcdc', borderWidth: 1,}}>
             <Text style={{ fontSize: 18, marginLeft: 2}}>#3</Text>
-            <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 4}}>Chapter 3 อะไรนะ เธอท้อง</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 4}}>ตอนที่ 3 อะไรนะ เธอท้อง</Text>
             {/* 3icon 3text bottom */}
             <View style={{flexDirection: 'row'}}>
               <View style={{flexDirection: 'row', alignItems: 'center' , marginRight: 30, marginLeft: 4, marginBottom: 5, marginTop: 5, }}>
@@ -128,11 +129,11 @@ const IndexFiction = ({route, navigation}) => {
               </View>
             </View>
           </View>
-          {/* End Box Chapter */}
-          {/* Box Chapter */}
+          {/* End Box ตอนที่ */}
+          {/* Box ตอนที่ */}
           <View style={{padding: 10, borderColor: '#dcdcdc', borderWidth: 1,}}>
             <Text style={{ fontSize: 18, marginLeft: 2}}>#4</Text>
-            <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 4}}>Chapter 4 แต่งงานกันนะไอต้าว</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 4}}>ตอนที่ 4 แต่งงานกันนะไอต้าว</Text>
             {/* 3icon 3text bottom */}
             <View style={{flexDirection: 'row'}}>
               <View style={{flexDirection: 'row', alignItems: 'center' , marginRight: 30, marginLeft: 4, marginBottom: 5, marginTop: 5, }}>
@@ -151,11 +152,11 @@ const IndexFiction = ({route, navigation}) => {
               </View>
             </View>
           </View>
-          {/* End Box Chapter */}
-          {/* Box Chapter */}
+          {/* End Box ตอนที่ */}
+          {/* Box ตอนที่ */}
           <View style={{padding: 10, borderColor: '#dcdcdc', borderWidth: 1,}}>
             <Text style={{ fontSize: 18, marginLeft: 2}}>#5</Text>
-            <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 4}}>Chapter 5 แต่งงานกันนะไอต้าว</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 4}}>ตอนที่ 5 แต่งงานกันนะไอต้าว</Text>
             {/* 3icon 3text bottom */}
             <View style={{flexDirection: 'row'}}>
               <View style={{flexDirection: 'row', alignItems: 'center' , marginRight: 30, marginLeft: 4, marginBottom: 5, marginTop: 5, }}>
@@ -174,11 +175,11 @@ const IndexFiction = ({route, navigation}) => {
               </View>
             </View>
           </View>
-          {/* End Box Chapter */}
-          {/* Box Chapter */}
+          {/* End Box ตอนที่ */}
+          {/* Box ตอนที่ */}
           <View style={{padding: 10, borderColor: '#dcdcdc', borderWidth: 1,}}>
             <Text style={{ fontSize: 18, marginLeft: 2}}>#6</Text>
-            <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 4}}>Chapter 6 แต่งงานกันนะไอต้าว</Text>
+            <Text style={{fontWeight: 'bold', fontSize: 18, marginLeft: 4}}>ตอนที่ 6 แต่งงานกันนะไอต้าว</Text>
             {/* 3icon 3text bottom */}
             <View style={{flexDirection: 'row'}}>
               <View style={{flexDirection: 'row', alignItems: 'center' , marginRight: 30, marginLeft: 4, marginBottom: 5, marginTop: 5, }}>
@@ -197,7 +198,7 @@ const IndexFiction = ({route, navigation}) => {
               </View>
             </View>
           </View>
-          {/* End Box Chapter */}
+          {/* End Box ตอนที่ */}
           {/* END HARDCODEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE */}
           </View>
         

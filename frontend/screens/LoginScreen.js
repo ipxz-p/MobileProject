@@ -4,11 +4,16 @@ import React , { useState } from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios  from 'axios';
+import { useDispatch } from 'react-redux';
+import { changeUserId } from '../store/actions/paramsAction';
+
 
 const LoginScreen = ({route, navigation}) => {
   const [showPassword, setShowPassword] = useState(false); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  
 
   const toggleShowPassword = () => { 
     setShowPassword(!showPassword); 

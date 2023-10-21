@@ -21,6 +21,7 @@ import BookShelfScreen from "../screens/BookShelfScreen";
 import FollowScreen from "../screens/FollowScreen";
 import AuthorScreen from "../screens/AuthorScreen";
 import SearchsScreen from "../screens/SearchsScreen";
+import CatagoryScreen from '../screens/CatagoryScreen'
 //<<Bae>> Writing & Profile & Regis Login
 import WritingScreen from "../screens/WritingScreen";
 import AddEditWritingScreen from "../screens/AddEditWritingScreen";
@@ -37,6 +38,7 @@ const HomeNavigator = createNativeStackNavigator();
 const ReadTabNavigator = createMaterialTopTabNavigator();
 const ReadNavigator = createNativeStackNavigator();
 const BookShelfNavigator = createNativeStackNavigator();
+const CatagoryNavigator = createNativeStackNavigator();
 const NotiNavigator = createNativeStackNavigator();
 const SearchNavigator = createNativeStackNavigator();
 const FollowNavigator = createNativeStackNavigator();
@@ -45,6 +47,7 @@ const MainTabNavigator = createBottomTabNavigator();
 const WriteNavigator = createNativeStackNavigator();
 const ProfilesNavigator = createNativeStackNavigator();
 
+import { useSelector } from 'react-redux';
 
 // สร้าง function สำหรับการกำหนด Navigator แต่ละตัว
 // <<Ing>> Tab Navigator Home Reading Writing Profile
@@ -55,28 +58,28 @@ function Tab(){
       tabBarStyle: { backgroundColor: "white" },
       tabBarLabelStyle: { fontSize: 12 },
       headerShown: false,}} >
-      <MainTabNavigator.Screen name="Home" component={HomeNavigatorss} options={{headerShown:false,
+      <MainTabNavigator.Screen name="Home" component={HomeNavigatorss} options={{headerShown:false, title:"หน้าแรก",
         tabBarIcon: ({ color, size }) => {
             return <AntDesign name="home" size={24} color={color} />
         }
       }} />
-      <MainTabNavigator.Screen name="BookShelfss" component={BookShelfsNavigator} options={{title:"Bookself",
+      <MainTabNavigator.Screen name="BookShelfss" component={BookShelfsNavigator} options={{title:"ชั้นหนังสือ",
         tabBarIcon: ({ color, size }) => {
             return <AntDesign name="book" size={24} color={color} />
             // return <Ionicons name="book-outline" size={24} color={color} />
         }
       }} />
-      <MainTabNavigator.Screen name="Followss" component={FollowsNavigator} options={{title:"Follow",
+      <MainTabNavigator.Screen name="Followss" component={FollowsNavigator} options={{title:"ติดตาม",
         tabBarIcon: ({ color, size }) => {
             return <AntDesign name="contacts" size={24} color={color} />
         }
       }} />
-      <MainTabNavigator.Screen name="Writing" component={WritingNavigator} options={{headerShown:false,
+      <MainTabNavigator.Screen name="Writing" component={WritingNavigator} options={{title:"งานเขียน", headerShown:false,
         tabBarIcon: ({ color, size }) => {
             return  <AntDesign name="edit" size={24} color={color} />
         }
       }} />
-      <MainTabNavigator.Screen name="Profile" component={ProfileNavigator} options={{headerShown:false,
+      <MainTabNavigator.Screen name="Profile" component={ProfileNavigator} options={{title:"โปรไฟล์", headerShown:false,
         tabBarIcon: ({ color, size }) => {
             return <AntDesign name="user" size={24} color={color} />
         }
@@ -96,8 +99,8 @@ function HomeNavigatorss({route, navigation}) {
    navigation.setOptions({tabBarStyle: {display: 'flex'}});
   }
   return (
-      <HomeNavigator.Navigator initialRouteName="HomeIndex" screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",headerBackTitleVisible: false}}>
-        <HomeNavigator.Screen name="HomeIndex" options={{title:"Ink Journey",
+      <HomeNavigator.Navigator initialRouteName="HomeScreens" screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",headerBackTitleVisible: false}}>
+        <HomeNavigator.Screen name="HomeScreens" options={{title:"Ink Journey",
       headerRight: () => (
         <View style={{flexDirection:"row"}}>
           <TouchableOpacity onPress={() => { navigation.navigate("SearchsScreens") }}>
@@ -113,17 +116,18 @@ function HomeNavigatorss({route, navigation}) {
         </View>
       )}} component={HomeScreen} />
         <HomeNavigator.Screen name="IndexFiction" options={{title:"IndexFiction", headerShown:false,}} component={IndexFictionScreen} />
-        <HomeNavigator.Screen name="ChapterFiction" options={{title:"Chapter1 แต่งงานกันนะไอต้าว"}} component={ChapterFictionScreen} />
-        <HomeNavigator.Screen name="Notifications" options={{title:"Notifications", headerShown:false,}} component={NotificationNavigator} />
+        <HomeNavigator.Screen name="ChapterFiction" options={{title:"ตอนที่ 1 แต่งงานกันนะไอต้าว"}} component={ChapterFictionScreen} />
+        <HomeNavigator.Screen name="Notifications" options={{title:"การแจ้งเตือน", headerShown:false,}} component={NotificationNavigator} />
         <HomeNavigator.Screen name="SearchsScreens" options={{headerShown:false,}} component={SerachsNavigator} />
+        <HomeNavigator.Screen name="CatagorysNavigators" options={{headerShown:false,}} component={CatagorysNavigator} />
       </HomeNavigator.Navigator>
   );
 }
 function NotificationNavigator(){
   return (
     <NotiNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
-      <NotiNavigator.Screen name="Notificationss" options={{title:"Notifications",}} component={NotificationsScreen} />
-      <NotiNavigator.Screen name="ChapterFictionScreensssss" options={{title:"Chapter1 แต่งงานกันนะไอต้าว",headerBackTitleVisible: false}} component={ChapterFictionScreen} />
+      <NotiNavigator.Screen name="Notificationss" options={{title:"การแจ้งเตือน",}} component={NotificationsScreen} />
+      <NotiNavigator.Screen name="ChapterFictionScreensssss" options={{title:"ตอนที่ 1 แต่งงานกันนะไอต้าว",headerBackTitleVisible: false}} component={ChapterFictionScreen} />
     </NotiNavigator.Navigator>
   )
 }
@@ -132,31 +136,8 @@ function SerachsNavigator(){
     <SearchNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
       <SearchNavigator.Screen name="Notificationss" options={{title:"Search",headerShown:false,}} component={SearchsScreen} />
       <SearchNavigator.Screen name="IndexFictionsssss" options={{title:"IndexFiction", headerShown:false,}} component={IndexFictionScreen} />
-      <SearchNavigator.Screen name="ChapterFictionScreennsssss" options={{title:"Chapter1 แต่งงานกันนะไอต้าว",headerBackTitleVisible: false}} component={ChapterFictionScreen} />
+      <SearchNavigator.Screen name="ChapterFictionScreennsssss" options={{title:"ตอนที่ 1 แต่งงานกันนะไอต้าว",headerBackTitleVisible: false}} component={ChapterFictionScreen} />
     </SearchNavigator.Navigator>
-  )
-}
-
-// <<Ing>> Reading Navigator Stack
-function ReadingNavigator(){
-  return (
-    <ReadNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
-      {/* Readingpage is not error */}
-      <ReadNavigator.Screen name="Readings" options={{title:"Reading",}} component={ReadingTabNavigator} />
-      {/* <ReadNavigator.Screen name="BookShelfScreens" options={{title:"BookShelfScreen",}} component={BookShelfScreen} />
-      <ReadNavigator.Screen name="IndexFictionScreens" options={{title:"IndexFictionScreen",}} component={IndexFictionScreen} /> */}
-    </ReadNavigator.Navigator>
-  )
-}
-
-// <<Ing>> Reading Navigator Top Tab
-function ReadingTabNavigator(){
-  return (
-    <ReadTabNavigator.Navigator >
-      <ReadTabNavigator.Screen name="ชั้นหนังสือ" component={BookShelfsNavigator} />
-      {/* <ReadTabNavigator.Screen name="ชั้นหนังสือ" component={BookShelfScreen} /> ได้แล้ว แต่มันกลับไปหน้าแรก*/}
-      <ReadTabNavigator.Screen name="ติดตามผู้แต่ง" component={FollowsNavigator} />
-    </ReadTabNavigator.Navigator>
   )
 }
 
@@ -171,19 +152,38 @@ function BookShelfsNavigator({route, navigation}){
   }
   return(
     <BookShelfNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
-      <BookShelfNavigator.Screen name="Bookself" component={BookShelfScreen} />
+      <BookShelfNavigator.Screen name="Bookshelf" options={{title:"ชั้นหนังสือ"}} component={BookShelfScreen} />
       <BookShelfNavigator.Screen name="IndexFiction" component={IndexFictionScreen} options={{headerShown:false,}}/>
-      <BookShelfNavigator.Screen name="ChapterFiction" component={ChapterFictionScreen} options={{}}/>
+      <BookShelfNavigator.Screen name="ChapterFiction"  component={ChapterFictionScreen} options={{title:"ตอนที่ 1: แต่งงานกันนะไอต้าว" }}/>
     </BookShelfNavigator.Navigator>
   )
 }
+function CatagorysNavigator({route, navigation}){
+  const tabHiddenRoutes = ["IndexFiction","ChapterFiction"];
+
+  if(tabHiddenRoutes.includes(getFocusedRouteNameFromRoute(route))){
+    navigation.setOptions({tabBarStyle: {display: 'none'}});
+  } else {
+  navigation.setOptions({tabBarStyle: {display: 'flex'}});
+  }
+  const categoryType = useSelector((state) => state.params.categoryType);
+  return(
+    // ชื่อประเภท
+    <CatagoryNavigator.Navigator initialRouteName="Catagory" screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
+      <CatagoryNavigator.Screen name="Catagory" options={{title: categoryType == "love" ? "นิยายรัก" : categoryType == "adult" ? "นิยาย18+" : categoryType == "y" ? "นิยายวาย" : categoryType == "fantasy" ? "นิยายแฟนตาซี" : categoryType == "investigate" ? "นิยายสืบสวน" : "error"}} component={CatagoryScreen} />
+      <CatagoryNavigator.Screen name="IndexFiction" component={IndexFictionScreen} options={{headerShown:false,}}/>
+      <CatagoryNavigator.Screen name="ChapterFiction"  component={ChapterFictionScreen} options={{title:"ตอนที่ 1: แต่งงานกันนะไอต้าว" }}/>
+    </CatagoryNavigator.Navigator>
+  )
+}
+
 
 // <<Ing>> Reading Navigator Follow Stack
 function FollowsNavigator(){
   return(
     <FollowNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
-      <FollowNavigator.Screen name="Follow" component={FollowScreen} />
-      <FollowNavigator.Screen name="Author" options={{title:"rwit suwanna", headerBackTitleVisible: false}} component={AuthorScreen} />
+      <FollowNavigator.Screen name="Follow" options={{title:"ติดตาม"}} component={FollowScreen} />
+      <FollowNavigator.Screen name="Author" options={{title:""}} component={AuthorScreen} />
       <BookShelfNavigator.Screen name="IndexFiction" component={IndexFictionScreen} options={{headerShown:false,}}/>
       <BookShelfNavigator.Screen name="ChapterFiction" component={ChapterFictionScreen} options={{}}/>
     </FollowNavigator.Navigator>
@@ -193,10 +193,12 @@ function FollowsNavigator(){
 // <<Bae>> Writing Navigator
 function WritingNavigator({route, navigation}){
 
+  const novelFromUserId = useSelector((state) => state.params.novelFromUserId);
+
   return (
     <WriteNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
-      <WriteNavigator.Screen name="WritingScreens" options={{title:"Writing"}} component={WritingScreen} />
-      <WriteNavigator.Screen name="AddEditWritingScreen" options={{title:"สร้างนิยาย", headerBackTitleVisible: false}} component={AddEditWritingScreen} />
+      <WriteNavigator.Screen name="WritingScreen" options={{title:"งานเขียน"}} component={WritingScreen} />
+      <WriteNavigator.Screen name="AddEditWritingScreen" options={{title: novelFromUserId == '' ? "สร้างนิยาย" : "แก้ไขนิยาย", headerBackTitleVisible: false}} component={AddEditWritingScreen} />
       <WriteNavigator.Screen name="AddEditChapterScreen" options={{title:"สร้างตอน", headerBackTitleVisible: false}} component={AddEditChapterScreen} />
       <WriteNavigator.Screen name="ContentChpaterScreen" options={{title:"สร้างเนื้อความ", headerBackTitleVisible: false, 
       headerRight: () => (
@@ -210,7 +212,7 @@ function WritingNavigator({route, navigation}){
 function ProfileNavigator(){
   return (
     <ProfilesNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
-      <ProfilesNavigator.Screen name="ProfileScreen" options={{title:"Profile", headerBackTitleVisible: false}}  component={ProfileScreen} />
+      <ProfilesNavigator.Screen name="ProfileScreen" options={{title:"โปรไฟล์", headerBackTitleVisible: false}}  component={ProfileScreen} />
       <ProfilesNavigator.Screen name="LoginScreen" options={{title:"Ink Journey", headerBackTitleVisible: false}} component={LoginScreen} />
       <ProfilesNavigator.Screen name="RegisterScreen" options={{title:"Ink Journey", headerBackTitleVisible: false}} component={RegisterScreen} />
     </ProfilesNavigator.Navigator>

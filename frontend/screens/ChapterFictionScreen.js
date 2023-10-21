@@ -7,9 +7,6 @@ const ChapterFiction = () => {
 
 
 
-
-
-
       <ScrollView>
       <Text style={{fontSize: 15, textAlign: 'center', margin: 10, color: '#7B7D7D', marginTop: 30}}>เรื่อง: รักเธอที่สุด นายมาเฟีย</Text>
       <Text style={{fontWeight: 'bold', fontSize: 18, textAlign: 'center', margin: 10}}>ตอนที่1 แต่งงานกันนะไอต้าว</Text>

@@ -1,20 +1,183 @@
 import { View, Text, Button, StyleSheet, ScrollView, Image, TouchableOpacity, FlatList } from 'react-native'
-import React from 'react'
+import React, {useEffect, useState} from 'react'
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons, FontAwesome5  } from '@expo/vector-icons'; 
-
+import axios from "axios";
+import { useDispatch } from 'react-redux';
+import { changeNovelId, gotoCategory } from '../store/actions/paramsAction';
+import { useSelector } from 'react-redux';
 const HomeScreen = ({route, navigation}) => {
   
+  const [Novel, setNovel] = useState([]);
+  const dispatch = useDispatch()
+  useEffect(() => {
+    axios.get("http://10.0.2.2:3500/novel/getNovels")
+    .then((response) => setNovel(response.data))
+    .catch((err)=>console.log(err))
+  }, []);
+
+  const gotoCategoryHandler = (navigation, categoryType) => {
+    dispatch(gotoCategory(categoryType))
+    navigation.navigate("CatagorysNavigators")
+  }
+
+  const novelIdHandler = (navigation, novelId) => {
+    console.log(novelId);
+    dispatch(changeNovelId(novelId))
+    navigation.navigate("IndexFiction")
+  }
+
+  //นิยายรัก ดึง title views like
+  const renderLoveCatagory = ({ item }) => {
+    return item.category === "love" ? (
+      <View >
+        <TouchableOpacity onPress={() => { novelIdHandler(navigation, item._id) }}>
+          {/* Card */}
+          <View style={styles.cardfiction}>
+            <Image style={styles.imagecardfiction} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}} />
+            <View>
+              <Text style={styles.titlecardfiction}>{item.title}</Text>
+            </View>
+            <View style={styles.usercardfiction}>
+              <FontAwesome5 name="user-alt" size={16} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.owner.username}</Text>
+            </View>
+            <View style={styles.count}>
+              <Ionicons name="eye" size={18} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.views.length}  </Text>
+              <Ionicons name="heart-sharp" size={18} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.like.length}  </Text>
+            </View>
+          </View>
+          {/* End Card */}
+        </TouchableOpacity>
+        
+      </View>
+    ) : null;
+  }
+
+  const renderAdultCatagory = ({ item }) => {
+    return item.category === "adult" ? (
+      <View >
+        <TouchableOpacity>
+          {/* Card */}
+        <View style={styles.cardfiction}>
+            <Image style={styles.imagecardfiction} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}} />
+            <View>
+              <Text style={styles.titlecardfiction}>{item.title}</Text>
+            </View>
+            <View style={styles.usercardfiction}>
+              <FontAwesome5 name="user-alt" size={16} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.owner.username}</Text>
+            </View>
+            <View style={styles.count}>
+              <Ionicons name="eye" size={18} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.views.length}  </Text>
+              <Ionicons name="heart-sharp" size={18} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.like.length}  </Text>
+            </View>
+          </View>
+        {/* End Card */}
+          </TouchableOpacity>
+        
+      </View>
+    ) : null;
+  }
+
+  const renderFantasyCatagory = ({ item }) => {
+    return item.category === "fantasy" ? (
+      <View >
+        <TouchableOpacity>
+        {/* Card */}
+        <View style={styles.cardfiction}>
+            <Image style={styles.imagecardfiction} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}} />
+            <View>
+              <Text style={styles.titlecardfiction}>{item.title}</Text>
+            </View>
+            <View style={styles.usercardfiction}>
+              <FontAwesome5 name="user-alt" size={16} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.owner.username}</Text>
+            </View>
+            <View style={styles.count}>
+              <Ionicons name="eye" size={18} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.views.length}  </Text>
+              <Ionicons name="heart-sharp" size={18} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.like.length}  </Text>
+            </View>
+          </View>
+        {/* End Card */}
+        </TouchableOpacity>
+        
+      </View>
+    ) : null;
+  }
+
+  const renderInvestigateCatagory = ({ item }) => {
+    return item.category === "investigate" ? (
+      <View >
+        <TouchableOpacity>
+        {/* Card */}
+        <View style={styles.cardfiction}>
+            <Image style={styles.imagecardfiction} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}} />
+            <View>
+              <Text style={styles.titlecardfiction}>{item.title}</Text>
+            </View>
+            <View style={styles.usercardfiction}>
+              <FontAwesome5 name="user-alt" size={16} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.owner.username}</Text>
+            </View>
+            <View style={styles.count}>
+              <Ionicons name="eye" size={18} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.views.length}  </Text>
+              <Ionicons name="heart-sharp" size={18} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.like.length}  </Text>
+            </View>
+          </View>
+        {/* End Card */}
+        </TouchableOpacity>
+        
+      </View>
+    ) : null;
+  }
+
+
+
+  const renderYCatagory = ({ item }) => {
+    return item.category === "y" ? (
+      <View >
+        <TouchableOpacity>
+        {/* Card */}
+        <View style={styles.cardfiction}>
+            <Image style={styles.imagecardfiction} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}} />
+            <View>
+              <Text style={styles.titlecardfiction}>{item.title}</Text>
+            </View>
+            <View style={styles.usercardfiction}>
+              <FontAwesome5 name="user-alt" size={16} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.owner.username}</Text>
+            </View>
+            <View style={styles.count}>
+              <Ionicons name="eye" size={18} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.views.length}  </Text>
+              <Ionicons name="heart-sharp" size={18} color="#909090" />
+              <Text style={styles.txtcardfiction}>  {item.like.length}  </Text>
+            </View>
+          </View>
+        {/* End Card */}
+        </TouchableOpacity>
+        
+      </View>
+    ) : null;
+  }
+
+
   return (
     <View>
-
-
-
       <ScrollView>
         {/* Top of the week */}
       <LinearGradient
         colors={['#5652C9', '#8151C5']} >
-        <Text style={styles.title}>Top of the week</Text>
+        <Text style={styles.title}>นิยายแนะนำประจำสัปดาห์</Text>
 
         <View style={styles.box}>
           <Image style={styles.titleimage} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}} />
@@ -58,35 +221,44 @@ const HomeScreen = ({route, navigation}) => {
       {/* หมวดหมู่ */}
       <Text style={styles.titleofall}>หมวดหมู่</Text>
         <View style={styles.category}>
+          <TouchableOpacity onPress={() => { gotoCategoryHandler(navigation, "love") }}
+          >
+            <View style={styles.categoryitem}>
+              <Image style={styles.categoryimage} source={require('../assets/love.png')} />
+              <Text>รัก</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { gotoCategoryHandler(navigation, "adult")}}>
+            <View style={styles.categoryitem}>
+              <Image style={styles.categoryimage} source={require('../assets/sex.png')} />
+              <Text>18+</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { gotoCategoryHandler(navigation, "y")}}>
           <View style={styles.categoryitem}>
-            <Image style={styles.categoryimage} source={require('../assets/love.png')} />
-            <Text>รัก</Text>
-          </View>
-          <View style={styles.categoryitem}>
-            <Image style={styles.categoryimage} source={require('../assets/sex.png')} />
-            <Text>18+</Text>
-          </View>
-          <View style={styles.categoryitem}>
-            <Image style={styles.categoryimage} source={require('../assets/why.png')} />
-            <Text>วาย</Text>
-          </View>
-          <View style={styles.categoryitem}>
-            <Image style={styles.categoryimage} source={require('../assets/fantasy.png')} />
-            <Text>แฟนตาซี</Text>
-          </View>
-          <View style={styles.categoryitem}>
-            <Image style={styles.categoryimage} source={require('../assets/investigate.png')} />
-            <Text>สืบสวน</Text>
-          </View>
+              <Image style={styles.categoryimage} source={require('../assets/why.png')} />
+              <Text>วาย</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { gotoCategoryHandler(navigation, "fantasy")}}>
+            <View style={styles.categoryitem}>
+              <Image style={styles.categoryimage} source={require('../assets/fantasy.png')} />
+              <Text>แฟนตาซี</Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => { gotoCategoryHandler(navigation, "investigate")}}>
+            <View style={styles.categoryitem}>
+              <Image style={styles.categoryimage} source={require('../assets/investigate.png')} />
+              <Text>สืบสวน</Text>
+            </View>
+          </TouchableOpacity>
         </View>
 
 
 
         {/* ตอนใหม่ */}
-        <Text style={styles.titleofall}>ตอนใหม่</Text>
+        {/* <Text style={styles.titleofall}>ตอนใหม่</Text>
         <ScrollView horizontal={true} >
-          {/* เลื่อนข้างๆได้แล้วววววววววววว */}
-          {/* box ตอนใหม่ */}
           <TouchableOpacity onPress={() => { navigation.navigate("ChapterFiction")}}>
           <View style={styles.newchapter}>
           <View style={styles.cardchapter}>
@@ -101,17 +273,15 @@ const HomeScreen = ({route, navigation}) => {
           </View>
         </View>
           </TouchableOpacity>
-        
-        </ScrollView>
+        </ScrollView> */}
         
 
 
         {/* นิยายแนะนำ */}
-        {/* นิยายรัก */}
-        <Text style={styles.titleofall}>นิยายรัก</Text>
-        {/* ScrollView ไว้ copy */}
+        <Text style={styles.titleofall}>แนะนำนิยายสำหรับคุณ</Text>
         <ScrollView horizontal={true} >
         <View style={styles.rcmfiction}>
+          {/* Card */}
           <View style={styles.cardfiction}>
             <Image style={styles.imagecardfiction} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}} />
             <View>
@@ -128,16 +298,99 @@ const HomeScreen = ({route, navigation}) => {
               <Text style={styles.txtcardfiction}> 982</Text>
             </View>
           </View>
+          {/* End Card */}
         </View>
         </ScrollView>
+
+
+
+        {/* หมวดหมู่นิยาย */}
+        <Text style={styles.titleofall}>หมวดหมู่นิยาย</Text>
+        {/* นิยายรัก */}
+        <Text style={styles.titleofall}>นิยายรัก</Text>
+        {/* ScrollView ไว้ copy */}
+        <ScrollView horizontal={true} >
+        <View style={styles.rcmfiction}>
+          {/* Card */}
+          <FlatList
+          data={Novel}
+          keyExtractor={(item) => item._id}
+          renderItem={renderLoveCatagory}
+          numColumns={14}
+          />
+          {/* End Card */}
+        </View>
+        </ScrollView>
+
+
         {/* นิยาย 18+ */}
         <Text style={styles.titleofall}>นิยาย 18+</Text>
+        {/* ScrollView ไว้ copy */}
+        <ScrollView horizontal={true} >
+        <View style={styles.rcmfiction}>
+          {/* Card */}
+          <FlatList
+          data={Novel}
+          keyExtractor={(item) => item._id}
+          renderItem={renderAdultCatagory}
+          numColumns={14}
+          />
+          {/* End Card */}
+        </View>
+        </ScrollView>
+
+
         {/* นิยายวาย */}
         <Text style={styles.titleofall}>นิยายวาย</Text>
+        {/* ScrollView ไว้ copy */}
+        <ScrollView horizontal={true} >
+        <View style={styles.rcmfiction}>
+          {/* Card */}
+          <FlatList
+          data={Novel}
+          keyExtractor={(item) => item._id}
+          renderItem={renderYCatagory}
+          numColumns={14}
+          />
+          {/* End Card */}
+        </View>
+        </ScrollView>
+
+
         {/* นิยายแฟนตาซี */}
         <Text style={styles.titleofall}>นิยายแฟนตาซี</Text>
+        {/* ScrollView ไว้ copy */}
+        <ScrollView horizontal={true} >
+        <View style={styles.rcmfiction}>
+          {/* Card */}
+          <FlatList
+          data={Novel}
+          keyExtractor={(item) => item._id}
+          renderItem={renderFantasyCatagory}
+          numColumns={14}
+          />
+          {/* End Card */}
+        </View>
+        </ScrollView>
+
+
         {/* นิยายสืบสวน */}
         <Text style={styles.titleofall}>นิยายสืบสวน</Text>
+        {/* ScrollView ไว้ copy */}
+        <ScrollView horizontal={true} >
+        <View style={styles.rcmfiction}>
+          {/* Card */}
+          <FlatList
+          data={Novel}
+          keyExtractor={(item) => item._id}
+          renderItem={renderInvestigateCatagory}
+          numColumns={14}
+          />
+          {/* End Card */}
+        </View>
+        </ScrollView>
+
+
 
 
 

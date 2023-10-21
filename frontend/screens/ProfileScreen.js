@@ -7,6 +7,9 @@ import axios from 'axios';
 import jwtDecode from 'jwt-decode';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons} from "@expo/vector-icons";
+import { useSelector, useDispatch} from 'react-redux';
+import { changeUserId } from '../store/actions/paramsAction';
+
 
 
 const ProfileScreen = ({route, navigation}) => {
@@ -19,6 +22,7 @@ const ProfileScreen = ({route, navigation}) => {
   const [userId, setUserId] = useState('');
   const [token, setToken] = useState('');
 
+  const dispatch = useDispatch();
  
   useFocusEffect(
       React.useCallback(() => {
@@ -36,16 +40,17 @@ const ProfileScreen = ({route, navigation}) => {
           }
         };
         fetchDataByToken();
+        dispatch(changeUserId(userId));
   
     }, [])
   );
 
   const onLogout = async () => {
-    const dataToken = await AsyncStorage.removeItem('token');
-    if (!dataToken){
-      navigation.navigate('LoginScreen')
-      alert('ออกจากระบบเรียบร้อยแล้ว')
-  }
+    await AsyncStorage.removeItem('token');
+    dispatch(changeUserId(''));
+    navigation.navigate('LoginScreen')
+    alert('ออกจากระบบเรียบร้อยแล้ว')
+  
 }
 
   const toggleDatepicker= () => {
@@ -107,7 +112,7 @@ const ProfileScreen = ({route, navigation}) => {
 
 
   return (
-    <View>
+    
 
       <View style={styles.view}>
       
@@ -153,13 +158,15 @@ const ProfileScreen = ({route, navigation}) => {
           <Text style={{ color: '#fff', fontSize: 18, }}>ออกจากระบบ</Text>
         </TouchableOpacity>
       </LinearGradient>
+
+  
       
 
       </View>
       
 
 
-    </View>
+    
   )
 }
 
