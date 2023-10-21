@@ -118,7 +118,7 @@ const AddEditWritingScreen = ({route, navigation}) => {
   
       if (response.status === 200) {
         alert('สร้างนิยายเรื่อง ' + response.data.title + ' เรียบร้อยแล้ว')
-        // setNovelId(response.data._id)
+        navigation.navigate('WritingScreen');
       } 
       
     } catch (error) {
@@ -249,7 +249,7 @@ const renderNovelFromUserId = ({ item }) => {
   />
     ) : (
   // สำหรับคนที่ไม่เคยสร้างนิยายมาก่อนนน กับคนที่มีนิยายแล้วแต่สร้างใหม่
-  <View>
+  <ScrollView>
     <View style={styles.view}>
       <Text style={{alignSelf: 'flex-start', fontWeight: 'bold', fontSize: 19, marginBottom: 20,}}>รูปภาพหน้าปก</Text>
       <Image style={{height:190, width: 190, resizeMode: 'contain', borderRadius: 10, alignSelf: 'center'}} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}}></Image>
@@ -270,7 +270,7 @@ const renderNovelFromUserId = ({ item }) => {
         </TouchableOpacity>
       </LinearGradient>
     </View>
-  </View>
+  </ScrollView>
 )}
     </View>
   )}
