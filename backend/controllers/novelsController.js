@@ -34,14 +34,14 @@ export const createNovel = async (req, res) => {
     if (!title || !description || !category) {
         return res.status(400).json({ message: 'Please enter title description and category' })
     }
-    if (!req.files.length) {
-        res.status(400).json({ message: 'Please choose an image of this novel' })
-    }
-    const images = req.files[0].originalname
+    // if (!req.files?.length) {
+    //     res.status(400).json({ message: 'Please choose an image of this novel' })
+    // }
+    // const images = req.files[0].originalname
     const Novel = await novels.create({
         title,
         description,
-        images,
+        // images,
         owner,
         category
     })
@@ -63,7 +63,7 @@ export const editNovel = async (req, res) => {
     if (!Novel) return res.status(400).json({ message: 'Novel not found' })
     if (title) Novel.title = title
     if (description) Novel.description = description
-    if (req.files?.length) Novel.images = req.files[0].originalname
+    // if (req.files?.length) Novel.images = req.files[0].originalname
     await Novel.save()
     return res.status(200).json(Novel)
 
