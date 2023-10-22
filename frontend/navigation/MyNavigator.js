@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
+import axios from "axios";
 //<<Bae>> import library
 //Icon
 import { EvilIcons , MaterialCommunityIcons, Ionicons, AntDesign, SimpleLineIcons   } from '@expo/vector-icons'; 
@@ -194,15 +195,67 @@ function FollowsNavigator(){
 function WritingNavigator({route, navigation}){
 
   const novelFromUserId = useSelector((state) => state.params.novelFromUserId);
+  const chapterTitle = useSelector((state) => state.params.chapterTitle);
+  const chapterContent = useSelector((state) => state.params.chapterContent);
+  const chapterFromNovelId = useSelector((state) => state.params.chapterFromNovelId);
+
+  const onSubmitFormHandler = async () => {
+
+    if (!chapterContent.trim()) {
+      alert("กรุณาเนื้อหา");
+    }
+
+    try {
+      const response = await axios.post(`http://10.0.2.2:3500/novel/createChapter`, {
+        novelId: novelFromUserId,
+        title: chapterTitle,
+        content: chapterContent
+      })
+  
+      if (response.status === 200) {
+        alert('สร้างตอนเรียบร้อยแล้ว');
+        navigation.navigate('WritingScreen');
+      } 
+      
+    } catch (error) {
+      console.log("ในการสร้างตอน : " + error.message); 
+    }
+   
+  }
+
+  const onUpdateFormHandler = async () => {
+
+    if (!chapterContent.trim()) {
+      alert("กรุณาเนื้อหา");
+    }
+
+    try {
+      const response = await axios.put(`http://10.0.2.2:3500/novel/editChapter`, {
+        novelId: novelFromUserId,
+        chapterId : chapterFromNovelId,
+        title: chapterTitle,
+        content: chapterContent
+      })
+  
+      if (response.status === 200) {
+        alert('แก้ไขตอนเรียบร้อยแล้ว');
+        navigation.navigate('WritingScreen');
+      } 
+      
+    } catch (error) {
+      console.log("ในการแก้ไขตอน : " + error.message); 
+    }
+   
+  }
 
   return (
     <WriteNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
       <WriteNavigator.Screen name="WritingScreen" options={{title:"งานเขียน"}} component={WritingScreen} />
       <WriteNavigator.Screen name="AddEditWritingScreen" options={{title: novelFromUserId == '' ? "สร้างนิยาย" : "แก้ไขนิยาย", headerBackTitleVisible: false}} component={AddEditWritingScreen} />
-      <WriteNavigator.Screen name="AddEditChapterScreen" options={{title:"สร้างตอน", headerBackTitleVisible: false}} component={AddEditChapterScreen} />
-      <WriteNavigator.Screen name="ContentChpaterScreen" options={{title:"สร้างเนื้อความ", headerBackTitleVisible: false, 
+      <WriteNavigator.Screen name="AddEditChapterScreen" options={{title: chapterFromNovelId == '' ? "สร้างตอน" : "แก้ไขตอน", headerBackTitleVisible: false}} component={AddEditChapterScreen} />
+      <WriteNavigator.Screen name="ContentChpaterScreen" options={{title:chapterFromNovelId == '' ? "สร้างเนื้อความ" : "แก้ไขเนื้อความ", headerBackTitleVisible: false, 
       headerRight: () => (
-      <TouchableOpacity onPress={() => navigation.navigate("WritingScreens")}><Text style={{color: 'white'}}>บันทึก</Text></TouchableOpacity>)
+      <TouchableOpacity onPress={chapterFromNovelId ? onUpdateFormHandler : onSubmitFormHandler}><Text style={{color: 'white'}}>บันทึก</Text></TouchableOpacity>)
       }} component={ContentChpaterScreen} />
     </WriteNavigator.Navigator>
   )

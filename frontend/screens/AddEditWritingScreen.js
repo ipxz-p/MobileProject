@@ -6,11 +6,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
-import jwtDecode from 'jwt-decode';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import { SelectList } from 'react-native-dropdown-select-list'
-import WritingScreen from './WritingScreen';
-import AddEditChapterScreen from './AddEditChapterScreen';
+import { changeChapterFromNovelId } from '../store/actions/paramsAction';
 
 const AddEditWritingScreen = ({route, navigation}) => {
 
@@ -25,6 +22,8 @@ const AddEditWritingScreen = ({route, navigation}) => {
   const [itemTitle, setItemTitle] = useState('');
   const [itemDescription, setItemDes] = useState('');
   const [itemCategory, setItemCategory] = useState('');
+  const [allChapter, setAllChapter] = useState([]);
+  const dispatch = useDispatch()
 
   useFocusEffect(
     React.useCallback(() => { 
@@ -117,7 +116,7 @@ const AddEditWritingScreen = ({route, navigation}) => {
       })
   
       if (response.status === 200) {
-        alert('สร้างนิยายเรื่อง ' + response.data.title + ' เรียบร้อยแล้ว')
+        alert('สร้างนิยายเรื่อง ' + response.data.title + ' เรียบร้อยแล้ว');
         navigation.navigate('WritingScreen');
       } 
       
@@ -168,15 +167,22 @@ const AddEditWritingScreen = ({route, navigation}) => {
       if (response.status === 200) {
         alert('ลบนิยายเรียบร้อยแล้ว');
         navigation.navigate('WritingScreen');
+        
       }
     } catch (error) {
       console.log('ในการลบนิยาย : ' + error);
     }
   };
 
+  const chapterFromNovelIdHandler = (navigation, chapterFromNovelId) => {
+    dispatch(changeChapterFromNovelId(chapterFromNovelId))
+    navigation.navigate("AddEditChapterScreen")
+  }
+
 const renderNovelFromUserId = ({ item }) => {
-  
+
   if (novelFromUserId === item._id) {
+    setAllChapter(item.chapter);
     return (
       <View>
       <View style={styles.view}>
@@ -196,28 +202,30 @@ const renderNovelFromUserId = ({ item }) => {
       <View style={styles.view}>
         <Text style={{fontWeight: 'bold', fontSize: 19,}}>ตอนทั้งหมด ({item.chapter.length})</Text>
         <LinearGradient  style={{borderRadius: 50, marginTop: 25, marginBottom: 5,  width:150,  alignSelf: 'center',}} colors={['#FBBC2C', '#FE8F7C']} >
-          <TouchableOpacity style={styles.addButton} onPress={() => {navigation.navigate("AddEditChapterScreen")}}>
+          <TouchableOpacity style={styles.addButton} onPress={() => {chapterFromNovelIdHandler(navigation, '')}}>
             <Text style={{ color: '#fff' }}>เพิ่มตอนใหม่</Text>
           </TouchableOpacity>
         </LinearGradient>
       </View>
 
         {/* ก้อนตอน */}
-        {item.chapter.length !== 0 &&(<TouchableOpacity style={styles.chapter} onPress={() => {navigation.navigate("AddEditChapterScreen")}}>
+        {allChapter.map((i, index) => (
+        <TouchableOpacity style={styles.chapter} onPress={() => {chapterFromNovelIdHandler(navigation, i._id)}}>
           {/* เลขตอน */}
-          <Text>#1</Text>
+          <Text>#{index+1}</Text>
           {/* chapter เท่าไหร่ ชื่อตอน */}
-          <Text style={{fontWeight: 'bold', fontSize: 16, marginTop: 5,}}>{item.chapter.title}</Text>
+          <Text style={{fontWeight: 'bold', fontSize: 16, marginTop: 5,}}>{i.title}</Text>
           {/* ก้อนจำนวนคนดูและคอมเม้น */}
           <View style={{marginTop: 6, flexDirection: 'row'}}>
             {/* จำนวนคนดู */}
             <Ionicons style={{marginRight: 3,}} name="eye" size={17} color="#909090" />
-            <Text style={{color:"#909090", marginRight: 8,}}>158</Text>
+            <Text style={{color:"#909090", marginRight: 8, marginTop: -1}}>{i.views.length}</Text>
             {/* จำนวนคนคอมเม้น */}
-            <MaterialCommunityIcons style={{marginRight: 2, marginTop: 2,}} name="comment-processing" size={17} color="#909090" />
-            <Text style={{color:"#909090", marginRight: 8,}}>5</Text>
+            <MaterialCommunityIcons style={{marginRight: 2, marginTop: 1,}} name="comment-processing" size={17} color="#909090" />
+            <Text style={{color:"#909090", marginRight: 8, marginTop: -1}}>{i.comments.length}</Text>
           </View>
-        </TouchableOpacity>)}
+        </TouchableOpacity>
+        ))}
 
         {/* เส้นสีเทา */}
       <View style={{backgroundColor: '#D0D3D4', width: 400, height: 6, marginTop: 5}}></View>
