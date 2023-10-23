@@ -52,10 +52,10 @@ const ContentChpaterScreen = ({route, navigation}) => {
     if (chapterFromNovelId === item._id){
     return (
 
-      <SafeAreaView>
+      <SafeAreaView> 
         <RichToolbar style={{color: 'white'}}
         editor={richText}
-        actions={[actions.redo, actions.undo, actions.setBold, actions.setItalic, actions.setUnderline, actions.keyboard, actions.insertImage]}
+        actions={[actions.redo, actions.undo, actions.indent,actions.setBold, actions.setItalic, actions.setUnderline, actions.keyboard, actions.insertImage]}
         iconMap={{ [actions.heading1]: handleHead }}
       />
       <ScrollView>

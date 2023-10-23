@@ -1,7 +1,7 @@
 // bae
-import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, Switch, ScrollView, FlatList} from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, ScrollView, FlatList} from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { Ionicons, Octicons, MaterialCommunityIcons , FontAwesome } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
@@ -42,9 +42,11 @@ const AddEditWritingScreen = ({route, navigation}) => {
     
     const forEdit = dataArray.filter(item => item._id === novelFromUserId);
     if (forEdit.length === 1){
+      // console.log(forEdit[0].chapter);
       setItemTitle(forEdit[0].title);
       setItemDes(forEdit[0].description);
       setItemCategory(forEdit[0].category);
+      setAllChapter(forEdit[0].chapter);
       if (forEdit[0].category === 'love') {
         setItemCategory('นิยายรัก');
       }
@@ -64,6 +66,7 @@ const AddEditWritingScreen = ({route, navigation}) => {
     }
   }
     getNovelByUserId();
+
   }, [owner]);
 
   const categoryAllType = [
@@ -149,6 +152,7 @@ const AddEditWritingScreen = ({route, navigation}) => {
     })
       if (response.status === 200) {
         alert('แก้ไขนิยายเรียบร้อยแล้ว')
+        navigation.navigate('WritingScreen');
       } 
     } catch (error) {
       console.log("ในการแก้ไขนิยาย : " + error.message);
@@ -180,9 +184,8 @@ const AddEditWritingScreen = ({route, navigation}) => {
   }
 
 const renderNovelFromUserId = ({ item }) => {
-
+    
   if (novelFromUserId === item._id) {
-    setAllChapter(item.chapter);
     return (
       <View>
       <View style={styles.view}>
@@ -210,9 +213,9 @@ const renderNovelFromUserId = ({ item }) => {
 
         {/* ก้อนตอน */}
         {allChapter.map((i, index) => (
-        <TouchableOpacity style={styles.chapter} onPress={() => {chapterFromNovelIdHandler(navigation, i._id)}}>
+        <TouchableOpacity key={i._id} style={styles.chapter} onPress={() => {chapterFromNovelIdHandler(navigation, i._id)}}>
           {/* เลขตอน */}
-          <Text>#{index+1}</Text>
+          <Text >#{index+1}</Text>
           {/* chapter เท่าไหร่ ชื่อตอน */}
           <Text style={{fontWeight: 'bold', fontSize: 16, marginTop: 5,}}>{i.title}</Text>
           {/* ก้อนจำนวนคนดูและคอมเม้น */}

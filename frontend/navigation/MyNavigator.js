@@ -226,7 +226,7 @@ function WritingNavigator({route, navigation}){
   const onUpdateFormHandler = async () => {
 
     if (!chapterContent.trim()) {
-      alert("กรุณาเนื้อหา");
+      alert("กรุณาแก้ไขเนื้อหา");
     }
 
     try {
@@ -255,7 +255,7 @@ function WritingNavigator({route, navigation}){
       <WriteNavigator.Screen name="AddEditChapterScreen" options={{title: chapterFromNovelId == '' ? "สร้างตอน" : "แก้ไขตอน", headerBackTitleVisible: false}} component={AddEditChapterScreen} />
       <WriteNavigator.Screen name="ContentChpaterScreen" options={{title:chapterFromNovelId == '' ? "สร้างเนื้อความ" : "แก้ไขเนื้อความ", headerBackTitleVisible: false, 
       headerRight: () => (
-      <TouchableOpacity onPress={chapterFromNovelId ? onUpdateFormHandler : onSubmitFormHandler}><Text style={{color: 'white'}}>บันทึก</Text></TouchableOpacity>)
+      <TouchableOpacity onPress={chapterFromNovelId ? onUpdateFormHandler : onSubmitFormHandler}><Text style={{color: 'white'}}>{chapterFromNovelId ? 'บันทึก' : 'สร้าง'}</Text></TouchableOpacity>)
       }} component={ContentChpaterScreen} />
     </WriteNavigator.Navigator>
   )

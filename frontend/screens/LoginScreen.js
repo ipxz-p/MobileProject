@@ -4,16 +4,19 @@ import React , { useState } from 'react'
 import { MaterialCommunityIcons } from '@expo/vector-icons'; 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios  from 'axios';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { changeUserId } from '../store/actions/paramsAction';
+import jwtDecode from 'jwt-decode';
+
 
 
 const LoginScreen = ({route, navigation}) => {
+  const userId = useSelector((state) => state.params.userId);
   const [showPassword, setShowPassword] = useState(false); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const dispatch = useDispatch();
 
-  
 
   const toggleShowPassword = () => { 
     setShowPassword(!showPassword); 
@@ -37,8 +40,10 @@ const onChangePasswordHandler = (password) => {
         AsyncStorage.removeItem('token');
         AsyncStorage.setItem('token', response.data.accessToken);
         const dataToken = await AsyncStorage.getItem('token');
-        if (dataToken) {
-           navigation.navigate('ProfileScreen');
+        const decodeToken = jwtDecode(dataToken);
+        dispatch(changeUserId(decodeToken.UserInfo.id));
+        if (userId) {
+          navigation.navigate('ProfileScreen');
           alert('เข้าสู่ระบบเรียบร้อยแล้ว')
         }
    

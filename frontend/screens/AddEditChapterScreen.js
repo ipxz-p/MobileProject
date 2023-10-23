@@ -39,7 +39,7 @@ const AddEditChapterScreen = ({route, navigation}) => {
 const renderChapterFromNovelIdHandler = ({item}) => {
   if (chapterFromNovelId === item._id){
   return (
-    <View style={styles.view}>
+    <View key={item._id} style={styles.view}>
 
     {/* รูปปก */}
     <Image style={{height: 200, width: 200, resizeMode: 'contain', borderRadius: 10, alignSelf: 'center', marginTop: 20,}} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}}></Image>

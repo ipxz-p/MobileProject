@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, Pressable, Platform, TouchableWithoutFeedback} from 'react-native'
+import { Button, StyleSheet, View, Text, TouchableOpacity, Image, TextInput, Pressable, Platform, TouchableWithoutFeedback} from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import React , { useState} from 'react'
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -9,17 +9,18 @@ import { useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons} from "@expo/vector-icons";
 import { useSelector, useDispatch} from 'react-redux';
 import { changeUserId } from '../store/actions/paramsAction';
+import * as FileSystem from 'expo-file-system';
 
 
 
 const ProfileScreen = ({route, navigation}) => {
 
+  const userId = useSelector((state) => state.params.userId);
   const [date, setDate] = useState(new Date());
   const [dateOfBirth, setdateOfBirth] = useState('');
   const [showPicker, setShowPicker] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
-  const [userId, setUserId] = useState('');
   const [token, setToken] = useState('');
 
   const dispatch = useDispatch();
@@ -31,8 +32,6 @@ const ProfileScreen = ({route, navigation}) => {
             const dataToken = await AsyncStorage.getItem('token');
             setToken(dataToken);
             const decodeToken = jwtDecode(dataToken);
-            setUserId(decodeToken.UserInfo.id);
-            dispatch(changeUserId(decodeToken.UserInfo.id));
             setUsername(decodeToken.UserInfo.username);
             setEmail(decodeToken.UserInfo.email);
             setdateOfBirth(decodeToken.UserInfo.dateOfBirth);
@@ -110,6 +109,15 @@ const ProfileScreen = ({route, navigation}) => {
     }
   }
 
+  // const imgDir = FileSystem.documentDirectory + 'images/';
+
+  // const ensureDirExists = async () => {
+  //   const dirInfo = await FileSystem.getInfoAsync(imgDir);
+  //   if () {
+
+  //   }
+  // }
+
 
 
   return (
@@ -159,6 +167,8 @@ const ProfileScreen = ({route, navigation}) => {
           <Text style={{ color: '#fff', fontSize: 18, }}>ออกจากระบบ</Text>
         </TouchableOpacity>
       </LinearGradient>
+
+      
 
   
       
