@@ -15,7 +15,11 @@ export const getAllUser = async (req, res) => {
 
 export const getAuthorFollower = async (req, res) => {
     const userId = req.query.userId
-    const User = await users.find({ follower: userId }).select("-password").exec()
+    const User = await users.find({ follower: userId }).select("-password").populate({
+        path: 'follower',
+        model: 'users',
+        select: '_id username profileImgPath'
+    }).exec()
     return res.status(200).json(User);
 }
 
