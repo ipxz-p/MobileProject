@@ -42,6 +42,8 @@ const WritingScreen = ({route, navigation}) => {
   }, [owner])
 );
 
+
+
     const novelFromUserIdHandler = (navigation, novelFromUserId) => {
       dispatch(changeNovelFromUserId(novelFromUserId))
       navigation.navigate("AddEditWritingScreen")
@@ -67,7 +69,7 @@ const WritingScreen = ({route, navigation}) => {
         <View style={styles.view1}>
           
           <View style={styles.view1_1}>
-            <Image style={{height: 80, width: 80, resizeMode: 'contain', borderRadius: 10}} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}}></Image>
+            <Image style={{height: 80, width: 80, borderRadius: 10}} source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}}></Image>
           </View>
           <View>
             <Text style={{fontWeight: '400', fontSize: 16, marginBottom: 10,}}>{item.title}</Text>

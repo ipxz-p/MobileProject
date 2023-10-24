@@ -1,18 +1,28 @@
-import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, Switch, ScrollView, FlatList} from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, Switch, ScrollView, FlatList, TouchableWithoutFeedback} from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient';
 import React, {useState, useEffect} from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { changeChapterTitle} from '../store/actions/paramsAction';
 import axios from 'axios'
+import * as FileSystem from 'expo-file-system';
+import * as ImagePicker from 'expo-image-picker';
+import { MaterialIcons} from "@expo/vector-icons";
 
 const AddEditChapterScreen = ({route, navigation}) => {
 
   const novelFromUserId = useSelector((state) => state.params.novelFromUserId);
   const chapterFromNovelId = useSelector((state) => state.params.chapterFromNovelId);
+  const imgFromNovelId = useSelector((state) => state.params.imgFromNovelId);
   const [title, setTitle] = useState('');
   const [itemTitle, setItemTitle] = useState('');
   const [filteredData, setFilteredData] = useState([]);
   const dispatch = useDispatch();
+
+  const [images, setImages] = useState([]);
+  const [checkChangeImg, setCheckChangeImg] = useState(false);
+  const [pathImg, setPathImg] = useState('');
+  const [uriImg, setUriImg] = useState('');
+  const [nameImg, setNameImg] = useState('');
 
   useEffect(() => {
 
@@ -31,18 +41,21 @@ const AddEditChapterScreen = ({route, navigation}) => {
     
     
   }
+
+
   chapterByNovelId();
  
 }, [chapterFromNovelId])
+
 
 
 const renderChapterFromNovelIdHandler = ({item}) => {
   if (chapterFromNovelId === item._id){
   return (
     <View key={item._id} style={styles.view}>
-
-    {/* รูปปก */}
-    <Image style={{height: 200, width: 200, resizeMode: 'contain', borderRadius: 10, alignSelf: 'center', marginTop: 20,}} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}}></Image>
+{/* imgFromNovelId */}
+      <Image style={{height: 200, width: 200, borderRadius: 10, alignSelf: 'center', marginTop: 20,}} source={{ uri: `http://10.0.2.2:3500/img/${imgFromNovelId}`}}></Image>
+   
 
     <Text style={{ fontWeight: 'bold', fontSize: 19, marginBottom: 10, marginLeft: 20, marginTop: 25,}}>ชื่อตอน</Text>
 
@@ -104,6 +117,9 @@ const onDelFormHandler = async (event) => {
   }
 };
 
+
+
+
   return (
     <View>
       {filteredData.length > 0 && chapterFromNovelId !== '' ? (
@@ -114,7 +130,7 @@ const onDelFormHandler = async (event) => {
     ) : (
     <View style={styles.view}>
       {/* รูปปก */}
-      <Image style={{height: 200, width: 200, resizeMode: 'contain', borderRadius: 10, alignSelf: 'center', marginTop: 20,}} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}}></Image>
+      <Image style={{height: 200, width: 200, borderRadius: 10, alignSelf: 'center', marginTop: 20,}} source={{ uri: `http://10.0.2.2:3500/img/${imgFromNovelId}`}}></Image>
       <Text style={{ fontWeight: 'bold', fontSize: 19, marginBottom: 10, marginLeft: 20, marginTop: 25,}}>ชื่อตอน</Text>
 
       <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 40, borderColor: '#dcdcdc', padding: 8, marginBottom: 15, marginLeft: 20, marginRight: 20,}} value={title} onChangeText={(title) => setTitle(title)} placeholder="ตัวอย่าง: แรกพบเธอ"></TextInput>

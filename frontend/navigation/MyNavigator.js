@@ -202,7 +202,7 @@ function WritingNavigator({route, navigation}){
   const onSubmitFormHandler = async () => {
 
     if (!chapterContent.trim()) {
-      alert("กรุณาเนื้อหา");
+      alert("กรุณาเพิ่มเนื้อหา");
     }
 
     try {
@@ -222,12 +222,8 @@ function WritingNavigator({route, navigation}){
     }
    
   }
-
-  const onUpdateFormHandler = async () => {
-
-    if (!chapterContent.trim()) {
-      alert("กรุณาแก้ไขเนื้อหา");
-    }
+ 
+  const onUpdateFormHandler = async () => { 
 
     try {
       const response = await axios.put(`http://10.0.2.2:3500/novel/editChapter`, {

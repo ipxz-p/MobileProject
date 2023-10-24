@@ -29,6 +29,7 @@ const LoginScreen = ({route, navigation}) => {
 const onChangePasswordHandler = (password) => {
   setPassword(password)
   }
+
   const onSubmitFormHandler = async () => {
     try {
       const response = await axios.post('http://10.0.2.2:3500/auth/login', { 
@@ -37,14 +38,14 @@ const onChangePasswordHandler = (password) => {
       });
       
       if (response.status === 200){
-        AsyncStorage.removeItem('token');
         AsyncStorage.setItem('token', response.data.accessToken);
         const dataToken = await AsyncStorage.getItem('token');
         const decodeToken = jwtDecode(dataToken);
         dispatch(changeUserId(decodeToken.UserInfo.id));
         if (userId) {
-          navigation.navigate('ProfileScreen');
           alert('เข้าสู่ระบบเรียบร้อยแล้ว')
+          navigation.navigate('ProfileScreen');
+          
         }
    
       }
@@ -83,10 +84,7 @@ const onChangePasswordHandler = (password) => {
        <Text style={{ fontSize: 15, color: '#FE8F7C', fontWeight: 'bold'}}>คลิกที่นี่เพื่อสมัคร!</Text>
       </TouchableOpacity>
     </View>
-    
 
-      
-      
     </View>
   )
 }

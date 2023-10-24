@@ -1,6 +1,5 @@
 import { StyleSheet, Text, Platform, KeyboardAvoidingView, SafeAreaView, ScrollView,  TouchableOpacity, FlatList, View } from "react-native";
 import {actions, RichEditor, RichToolbar} from "react-native-pell-rich-editor";
-import { LinearGradient } from 'expo-linear-gradient';
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import { changeChapterContent } from '../store/actions/paramsAction';
@@ -45,8 +44,9 @@ const ContentChpaterScreen = ({route, navigation}) => {
 
   const handleEditorEdit = (text) => {
     setItemContent(text)
-    dispatch(changeChapterContent(text));
+    dispatch(changeChapterContent(itemContent));
   }
+  
 
   const renderChapterFromNovelIdHandler = ({item}) => {
     if (chapterFromNovelId === item._id){
@@ -86,7 +86,7 @@ const ContentChpaterScreen = ({route, navigation}) => {
     <SafeAreaView>
         <RichToolbar style={{color: 'white'}}
         editor={richText}
-        actions={[actions.redo, actions.undo, actions.setBold, actions.setItalic, actions.setUnderline, actions.keyboard, actions.insertImage]}
+        actions={[actions.redo, actions.undo, actions.indent, actions.setBold, actions.setItalic, actions.setUnderline, actions.keyboard, actions.insertImage]}
         iconMap={{ [actions.heading1]: handleHead }}
       />
       <ScrollView>

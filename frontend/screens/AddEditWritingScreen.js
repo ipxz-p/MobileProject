@@ -1,13 +1,16 @@
 // bae
-import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, ScrollView, FlatList} from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, ScrollView, FlatList, TouchableWithoutFeedback} from 'react-native'
 import React, { useState, useEffect } from 'react'
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons,  MaterialIcons} from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
 import { useDispatch, useSelector } from 'react-redux';
 import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import { SelectList } from 'react-native-dropdown-select-list'
-import { changeChapterFromNovelId } from '../store/actions/paramsAction';
+import { changeChapterFromNovelId, changeImgFromNovelId } from '../store/actions/paramsAction';
+import * as FileSystem from 'expo-file-system';
+import * as ImagePicker from 'expo-image-picker';
+
 
 const AddEditWritingScreen = ({route, navigation}) => {
 
@@ -25,6 +28,14 @@ const AddEditWritingScreen = ({route, navigation}) => {
   const [allChapter, setAllChapter] = useState([]);
   const dispatch = useDispatch()
 
+  const [images, setImages] = useState([]);
+  const [checkChangeImg, setCheckChangeImg] = useState(false);
+  const [uriImg, setUriImg] = useState('');
+  const [nameImg, setNameImg] = useState('');
+  const [checkEditChangeImg, setEditCheckChangeImg] = useState(false);
+  const [itemNameImg, setItemNameImg] = useState('');
+  const [itemUriImg, setItemUriImg] = useState('');
+  
   useFocusEffect(
     React.useCallback(() => { 
       setOwner(userId);
@@ -42,11 +53,14 @@ const AddEditWritingScreen = ({route, navigation}) => {
     
     const forEdit = dataArray.filter(item => item._id === novelFromUserId);
     if (forEdit.length === 1){
-      // console.log(forEdit[0].chapter);
+      // console.log(forEdit[0]);
       setItemTitle(forEdit[0].title);
       setItemDes(forEdit[0].description);
       setItemCategory(forEdit[0].category);
       setAllChapter(forEdit[0].chapter);
+      setItemNameImg(forEdit[0].images);
+      setItemUriImg(imgDir + forEdit[0].images);
+
       if (forEdit[0].category === 'love') {
         setItemCategory('นิยายรัก');
       }
@@ -64,10 +78,14 @@ const AddEditWritingScreen = ({route, navigation}) => {
       }
       
     }
+    setCheckChangeImg(false);
+    setEditCheckChangeImg(false);
   }
+    loadImages();
     getNovelByUserId();
 
-  }, [owner]);
+  }, [owner, novelId]);
+
 
   const categoryAllType = [
     {key: '1', value:'นิยายรัก'},
@@ -109,18 +127,34 @@ const AddEditWritingScreen = ({route, navigation}) => {
       alert("กรุณากรอกประเภท");
       return;
     }
-   
+
+    else if (!nameImg.trim()) {
+      alert("กรุณาเพิ่มรูปภาพ");
+      return;
+    }
+
+    
+  
     try {
-      const response = await axios.post(`http://10.0.2.2:3500/novel/createNovel`, {
-        owner,
-        title,
-        description,
-        category
-      })
+
+      const formData = new FormData();
+      formData.append('owner', owner);
+      formData.append('title', title);
+      formData.append('description', description);
+      formData.append('category', category);
+      formData.append('images', {
+       uri: uriImg,
+       type: 'image/jpeg',
+       name: nameImg,
+    });
+    
+      const response = await axios.post(`http://10.0.2.2:3500/novel/createNovel`, formData)
   
       if (response.status === 200) {
-        alert('สร้างนิยายเรื่อง ' + response.data.title + ' เรียบร้อยแล้ว');
+        alert('สร้างนิยายเรื่อง ' + title + ' เรียบร้อยแล้ว');
         navigation.navigate('WritingScreen');
+        setCheckChangeImg(false);
+        
       } 
       
     } catch (error) {
@@ -130,7 +164,7 @@ const AddEditWritingScreen = ({route, navigation}) => {
   }
   
     const onUpdateFormHandler = async (event) => {
-    
+
     if (!itemTitle.trim()) {
       alert("กรุณากรอกชื่อนิยาย");
       return;
@@ -139,23 +173,31 @@ const AddEditWritingScreen = ({route, navigation}) => {
       alert("กรุณากรอกคำโปรย");
       return;
     }
-    else if (!itemCategory.trim()) {
-      alert("กรุณากรอกประเภท");
-      return;
-    }
-   
+    
+  
     try {
-      const response = await axios.put(`http://10.0.2.2:3500/novel/editNovel`, {
-        novelId: novelId,
-        title: itemTitle,
-        description: itemDescription,
-    })
+      const formData = new FormData();
+        formData.append('novelId', novelId);
+        formData.append('title', itemTitle);
+        formData.append('description', itemDescription);
+        formData.append('images', {
+       uri: itemUriImg,
+       type: 'image/jpeg',
+       name: itemNameImg,
+    });
+
+      console.log(itemTitle);
+      console.log(itemDescription);
+
+      const response = await axios.put(`http://10.0.2.2:3500/novel/editNovel`, formData)
+
       if (response.status === 200) {
         alert('แก้ไขนิยายเรียบร้อยแล้ว')
+        setEditCheckChangeImg(false);
         navigation.navigate('WritingScreen');
       } 
     } catch (error) {
-      console.log("ในการแก้ไขนิยาย : " + error.message);
+      console.log("ในการแก้ไขนิยาย : " + error);
       
     }
   }
@@ -178,19 +220,100 @@ const AddEditWritingScreen = ({route, navigation}) => {
     }
   };
 
-  const chapterFromNovelIdHandler = (navigation, chapterFromNovelId) => {
+  const chapterFromNovelIdHandler = (navigation, chapterFromNovelId, imgFromNovelId) => {
     dispatch(changeChapterFromNovelId(chapterFromNovelId))
+    dispatch(changeImgFromNovelId(imgFromNovelId));
     navigation.navigate("AddEditChapterScreen")
   }
 
-const renderNovelFromUserId = ({ item }) => {
+  const imgDir = FileSystem.documentDirectory + 'images/';
+
+  const ensureDirExists = async () => {
+    const dirInfo = await FileSystem.getInfoAsync(imgDir);
+    if (!dirInfo.exists) {
+      await FileSystem.makeDirectoryAsync(imgDir, {intermediates: true});
+
+    }
+  }
+
+  const loadImages = async () => {
+    await ensureDirExists();
+    const files = await FileSystem.readDirectoryAsync(imgDir);
+    if (files.length > 0){
+      setImages([imgDir + files[files.length - 1]]);
+    }
+
+  }
+
+  const selectImage = async (useLibrary) => {
+    let result;
+
+    const options = ImagePicker.ImagePickerOptions = {
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowEditing: true,
+      aspect: [4, 3],
+      quality: 0.75,
+    }
+
+    if (useLibrary) {
+      result = await ImagePicker.launchImageLibraryAsync(options);
+      
+    } 
+
+    if (!result.canceled) {
+      saveImage(result.assets[0].uri)
+      
+    }
     
+}
+
+  const saveImage = async (uri) => {
+    await ensureDirExists();
+    const fileName = new Date().getTime() + '.jpg';
+    const dest = imgDir + fileName;
+    await FileSystem.copyAsync({from : uri, to: dest});
+    setCheckChangeImg(true);
+    setEditCheckChangeImg(true);
+    setImages([dest]);
+    setNameImg(fileName);
+    setUriImg(dest);
+    setItemNameImg(fileName);
+    setItemUriImg(dest);
+    
+
+    
+    
+ }
+
+const renderNovelFromUserId = ({ item }) => {
   if (novelFromUserId === item._id) {
     return (
       <View>
       <View style={styles.view}>
         <Text style={{alignSelf: 'flex-start', fontWeight: 'bold', fontSize: 19, marginBottom: 20,}}>รูปภาพหน้าปก</Text>
-        <Image style={{height: 190, width: 190, resizeMode: 'contain', borderRadius: 10, alignSelf: 'center'}} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}}></Image>
+        {!checkEditChangeImg ? (
+        <View>
+          <Image style={{height: 190, width: 190, borderRadius: 10, alignSelf: 'center', marginBottom: 15}} source={{ uri: `http://10.0.2.2:3500/img/${itemNameImg}`}}></Image>
+          <TouchableWithoutFeedback onPress={() => selectImage(true)}>
+          <View style={{height: 35, width: 35, position: "absolute", bottom: 0, right: 75, zIndex: 9999, backgroundColor: '#808080', borderRadius:20, top: 170 }}>
+            <MaterialIcons style={{alignSelf: 'center', marginTop: 5}} name="photo-camera" size={25} color={'white'}/>
+          </View>
+          </TouchableWithoutFeedback>
+        </View>
+         ) : ( 
+          <View>
+            {images.map((img) => ( 
+           <Image key={img} style={{height: 190, width: 190, borderRadius: 10, alignSelf: 'center'}} source={{ uri: img}}></Image>
+           ))} 
+           <TouchableWithoutFeedback onPress={() => selectImage(true)}>
+          <View style={{height: 35, width: 35, position: "absolute", bottom: 0, right: 75, zIndex: 9999, backgroundColor: '#808080', borderRadius:20, top: 170 }}>
+            <MaterialIcons style={{alignSelf: 'center', marginTop: 5}} name="photo-camera" size={25} color={'white'}/>
+          </View>
+          </TouchableWithoutFeedback>
+          </View>
+           )}  
+        
+
       </View>
       <View style={{backgroundColor: '#D0D3D4', width: 400, height: 6}}></View>
       <View style={styles.view}>
@@ -205,7 +328,7 @@ const renderNovelFromUserId = ({ item }) => {
       <View style={styles.view}>
         <Text style={{fontWeight: 'bold', fontSize: 19,}}>ตอนทั้งหมด ({item.chapter.length})</Text>
         <LinearGradient  style={{borderRadius: 50, marginTop: 25, marginBottom: 5,  width:150,  alignSelf: 'center',}} colors={['#FBBC2C', '#FE8F7C']} >
-          <TouchableOpacity style={styles.addButton} onPress={() => {chapterFromNovelIdHandler(navigation, '')}}>
+          <TouchableOpacity style={styles.addButton} onPress={() => {chapterFromNovelIdHandler(navigation, '', item.images)}}>
             <Text style={{ color: '#fff' }}>เพิ่มตอนใหม่</Text>
           </TouchableOpacity>
         </LinearGradient>
@@ -213,7 +336,7 @@ const renderNovelFromUserId = ({ item }) => {
 
         {/* ก้อนตอน */}
         {allChapter.map((i, index) => (
-        <TouchableOpacity key={i._id} style={styles.chapter} onPress={() => {chapterFromNovelIdHandler(navigation, i._id)}}>
+        <TouchableOpacity key={i._id} style={styles.chapter} onPress={() => {chapterFromNovelIdHandler(navigation, i._id, item.images)}}>
           {/* เลขตอน */}
           <Text >#{index+1}</Text>
           {/* chapter เท่าไหร่ ชื่อตอน */}
@@ -249,6 +372,8 @@ const renderNovelFromUserId = ({ item }) => {
     );
   } 
 };
+
+
   return (
     <View>
       {filteredData.length > 0 && novelFromUserId !== '' ? (
@@ -263,12 +388,33 @@ const renderNovelFromUserId = ({ item }) => {
   <ScrollView>
     <View style={styles.view}>
       <Text style={{alignSelf: 'flex-start', fontWeight: 'bold', fontSize: 19, marginBottom: 20,}}>รูปภาพหน้าปก</Text>
-      <Image style={{height:190, width: 190, resizeMode: 'contain', borderRadius: 10, alignSelf: 'center'}} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}}></Image>
+      
+      {!checkChangeImg ? (
+      <View>
+        <Image style={{height: 190, width: 190, resizeMode: 'contain', borderRadius: 10, alignSelf: 'center', borderWidth: 0.5, borderColor: '#808080', marginBottom: 15}} source={{ uri: 'https://media.discordapp.net/attachments/1122166608937361559/1166083877106892902/image-512.png?ex=6549333d&is=6536be3d&hm=5844c6d35e2aa87cde815ac635e2808ffb1cbe9db2f4eae98dbee91b17704279&='}}></Image>
+        <LinearGradient  style={{borderRadius: 50, marginTop: 10, marginBottom: 0,  width:150,  alignSelf: 'center',}} colors={['#FBBC2C', '#FE8F7C']} >
+            <TouchableOpacity style={styles.addButton} onPress={() => selectImage(true)}>
+              <Text style={{color: 'white'}}>เพิ่มรูปภาพหน้าปก</Text>
+            </TouchableOpacity>
+          </LinearGradient>
+          </View>
+          ) : (
+          <View>
+          {images.map((img) => (
+           <Image key={img} style={{height: 190, width: 190, borderRadius: 10, alignSelf: 'center'}} source={{ uri: img}}></Image> 
+          ))}
+            <TouchableWithoutFeedback onPress={() => selectImage(true)}>
+          <View style={{height: 35, width: 35, position: "absolute", bottom: 0, right: 75, zIndex: 9999, backgroundColor: '#808080', borderRadius:20, top: 170 }}>
+            <MaterialIcons style={{alignSelf: 'center', marginTop: 5}} name="photo-camera" size={25} color={'white'}/>
+          </View>
+          </TouchableWithoutFeedback>
+          </View>
+          )} 
     </View>
     <View style={{backgroundColor: '#D0D3D4', width: 400, height: 6}}></View>
     <View style={styles.view}>
       <Text style={{fontWeight: 'bold', fontSize: 19, marginBottom: 10,}}>ชื่อเรื่อง</Text>
-      <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 40, borderColor: '#dcdcdc', padding: 8, marginBottom: 15,}} value={title} onChangeText={(title) => setTitle(title)} placeholder="ชื่อเรื่องนิยาย"></TextInput>
+      <TextInput style={{ borderWidth: 1, borderRadius: 5, height: 40, borderColor: '#dcdcdc', padding: 8, marginBottom: 15,}} value={title} onChangeText={(title) => setTitle(title)} placeholder="ชื่อเรื่องนิยาย" keyboardType="default"></TextInput>
       <Text style={{fontWeight: 'bold', fontSize: 19, marginBottom: 10,}}>คำโปรย</Text>
       <TextInput multiline style={{ borderWidth: 1, borderRadius: 5, height: 40, borderColor: '#dcdcdc', padding: 8, paddingTop: 10, marginBottom: 15,}} value={description} onChangeText={(des) => setDes(des)} placeholder="คำโปรยนิยาย"></TextInput>
       <Text style={{fontWeight: 'bold', fontSize: 19, marginBottom: 10,}}>ประเภทนิยาย</Text>
