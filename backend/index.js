@@ -18,7 +18,7 @@ app.use(express.json())
 app.use(urlencoded({ extended: false }))
 app.use(cookieParser())
 app.use(cors({credentials: true}))
-
+app.use('/img', express.static('public/img'));
 app.use("/auth", authRoute)
 app.use("/user", usersRoutes)
 app.use("/novel", novelsRoutes)
