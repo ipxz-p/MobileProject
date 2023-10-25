@@ -1,5 +1,5 @@
 import express from 'express'
-import { addOrRemoveFollower, getAllUser, getAuthorFollower, getUser, updateUser } from '../controllers/usersController.js'
+import { addOrRemoveFollower, getAllUser, getAuthorFollower, getNotification, getUser, updateUser } from '../controllers/usersController.js'
 import { upload } from '../config/multerConfig.js'
 const router = express.Router()
 /**
@@ -98,5 +98,22 @@ router.put("/updateUser", upload.array("images"), updateUser)
  *         description: Follower added successfully
  */
 router.post("/addOrRemoveFollower", addOrRemoveFollower)
+/**
+ * @openapi
+ * /user/getNotification:
+ *  get:
+ *     tags:
+ *     - user
+ *     description: getNotification
+ *     parameters:
+ *      - name: userId
+ *        in: params
+ *        description: user id ที่ต้องการฟอลไป
+ *        required: true
+ *     responses:
+ *       200:
+ *         description: noti
+ */
+router.get("/getNotification", getNotification)
 
 export default router

@@ -27,6 +27,10 @@ const userSchema = new mongoose.Schema({
     follower: [
         mongoose.Schema.Types.ObjectId,
     ],
+    notification: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'novels',
+    }],
 })
 
 export default mongoose.model("users", userSchema)

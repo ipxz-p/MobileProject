@@ -1,5 +1,6 @@
 import mongoose, { isValidObjectId } from "mongoose";
 import users from "../models/users.js"
+import novels from "../models/novels.js";
 
 export const getUser = async (req, res) => {
     const userId = req.query.userId;
@@ -62,4 +63,22 @@ export const addOrRemoveFollower = async (req, res) => {
         });
         return res.status(200).json({ message: "Follower added successfully" });
     }
+}
+
+export const getNotification = async (req, res) => {
+    const userId = req.query.userId;
+    let arrNoti = []
+    const user = await users.findById(userId).exec();
+    if (!user) {
+        return res.status(400).json({ message: "User not found" });
+    }
+    for(let i=0; i<user.notification.length; i++){
+        const notificationId = user.notification[i];
+        const novel = await novels.findOne({ "chapter._id": notificationId }).exec();
+        if (novel) {
+            arrNoti.push(novel.chapter.find(chapter => chapter._id.equals(notificationId)));
+        }
+    }
+    arrNoti.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    return res.status(200).json(arrNoti);
 }
