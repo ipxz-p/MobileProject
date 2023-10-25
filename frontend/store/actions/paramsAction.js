@@ -72,8 +72,18 @@ export const changeChapterContent = (chapterContent) => {
     return { type: CHAPTER_CONTENT, chapterContent: chapterContent };
 };
 
+export const CHECK_CHAPTER_CONTENT = "CHECK_CHAPTER_CONTENT";
+export const changeCheckChapterContent = (checkChapterContent) => {
+    return { type: CHECK_CHAPTER_CONTENT, checkChapterContent: checkChapterContent};
+};
+
 // เก็บค่า image จาก novel id
 export const IMG_FROM_NOVEL_ID = "IMG_FROM_NOVEL_ID";
 export const changeImgFromNovelId = (imgFromNovelId) => {
     return { type: IMG_FROM_NOVEL_ID, imgFromNovelId: imgFromNovelId };
+};
+
+export const AGE_FROM_USER_ID = "AGE_FROM_USER_ID";
+export const changeAgeFromUserId = (ageFromUserId) => {
+    return { type: AGE_FROM_USER_ID, ageFromUserId: ageFromUserId };
 };

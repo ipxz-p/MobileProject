@@ -41,18 +41,14 @@ const onChangePasswordHandler = (password) => {
         AsyncStorage.setItem('token', response.data.accessToken);
         const dataToken = await AsyncStorage.getItem('token');
         const decodeToken = jwtDecode(dataToken);
-        dispatch(changeUserId(decodeToken.UserInfo.id));
-        if (userId) {
+        if (decodeToken.UserInfo.id) {
+          dispatch(changeUserId(decodeToken.UserInfo.id));
           alert('เข้าสู่ระบบเรียบร้อยแล้ว')
           navigation.navigate('ProfileScreen');
-          
         }
-   
       }
-      
     } catch (error) {
       alert('เกิดข้อผิดพลาดในการเข้าสู่ระบบ: ' + error);
-      
     }
   }
 

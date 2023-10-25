@@ -7,9 +7,9 @@ import axios from 'axios';
 import { useFocusEffect } from '@react-navigation/native';
 import { MaterialIcons} from "@expo/vector-icons";
 import { useSelector, useDispatch} from 'react-redux';
-import { changeUserId } from '../store/actions/paramsAction';
 import * as FileSystem from 'expo-file-system';
 import * as ImagePicker from 'expo-image-picker';
+import { changeAgeFromUserId } from '../store/actions/paramsAction';
 
 
 
@@ -25,7 +25,6 @@ const ProfileScreen = ({route, navigation}) => {
   const [email, setEmail] = useState('');
   const [images, setImages] = useState([]);
   const [checkChangeImg, setCheckChangeImg] = useState(false);
-
   const [pathImg, setPathImg] = useState('');
   const [uriImg, setUriImg] = useState('');
   const [nameImg, setNameImg] = useState('');
@@ -36,7 +35,6 @@ const ProfileScreen = ({route, navigation}) => {
       const fetchData = async () => {
         if (!userId.trim()){
           navigation.navigate('LoginScreen');
-          
         }
 
         try {
@@ -45,12 +43,27 @@ const ProfileScreen = ({route, navigation}) => {
               userId: userId
             }})
 
+          const bday = data.data.dateOfBirth;
+
+          // เช็คอายุว่าเกิน 18 มั้ยจ้า
+          const dateNow = new Date();
+          const dateBirth = new Date(bday);
+          var age_now = dateNow.getFullYear() - dateBirth.getFullYear();
+          var m = dateNow.getMonth() - dateBirth.getMonth();
+          if (m < 0 || (m === 0 && dateNow.getDate() < dateBirth.getDate())) {
+              age_now--;
+          }
+
+          dispatch(changeAgeFromUserId(age_now));
+         
+          const formattedString = bday.split('T')[0];
           setUsername(data.data.username);
           setEmail(data.data.email);
-          setdateOfBirth(data.data.dateOfBirth);
+          setdateOfBirth(formattedString);
+          setNameImg(data.data.profileImgPath);
+          setUriImg(imgDir + data.data.profileImgPath);
           setPathImg(data.data.profileImgPath);
           setCheckChangeImg(false);
-
   
         } catch (error) { 
           console.log(error)
@@ -62,8 +75,7 @@ const ProfileScreen = ({route, navigation}) => {
       
 
     }, [userId])
-    )
-
+  )
 
 
   const onLogout = async () => {
@@ -83,7 +95,8 @@ const ProfileScreen = ({route, navigation}) => {
 
       if (Platform.OS === 'android'){
         toggleDatepicker();
-        setdateOfBirth(currentDate.toDateString());
+        const formattedText = currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1).toString().padStart(2, '0') + '-' + currentDate.getDate().toString().padStart(2, '0');
+        setdateOfBirth(formattedText);
        
       }
       else {
@@ -99,7 +112,7 @@ const ProfileScreen = ({route, navigation}) => {
   const updateUser = async () => {
 
     try {
-      setPathImg(nameImg);
+    setPathImg(nameImg);
 
     const formData = new FormData();
     formData.append('userId', userId);

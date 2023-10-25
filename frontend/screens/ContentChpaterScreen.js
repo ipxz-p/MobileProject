@@ -2,8 +2,9 @@ import { StyleSheet, Text, Platform, KeyboardAvoidingView, SafeAreaView, ScrollV
 import {actions, RichEditor, RichToolbar} from "react-native-pell-rich-editor";
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { changeChapterContent } from '../store/actions/paramsAction';
+import { changeChapterContent, changeCheckChapterContent } from '../store/actions/paramsAction';
 import axios from 'axios'
+import { useFocusEffect } from '@react-navigation/native';
 
 const ContentChpaterScreen = ({route, navigation}) => {
 
@@ -16,35 +17,44 @@ const ContentChpaterScreen = ({route, navigation}) => {
   const [content, setContent] = useState('');
   const [filteredData, setFilteredData] = useState([]);
 
+
+  useFocusEffect(
+    React.useCallback(() => {
+
+      const chapterByNovelId = async () => {
+        const data = await axios.get('http://10.0.2.2:3500/novel/getChapters' ,{
+          params:{
+            novelId: novelFromUserId
+          }
+        })
+        const dataArray = Object.values(data.data);
+        setFilteredData(dataArray);
+        const forEdit = dataArray.filter(item => item._id === chapterFromNovelId);
+        if (forEdit.length === 1){
+          setItemContent(forEdit[0].content)
+         
+  
+        }
+        
+      }
+      chapterByNovelId();
+      
+    }, [chapterFromNovelId])
+  )
+ 
   useEffect(() => {
 
-    const chapterByNovelId = async () => {
-      const data = await axios.get('http://10.0.2.2:3500/novel/getChapters' ,{
-        params:{
-          novelId: novelFromUserId
-        }
-      })
-      const dataArray = Object.values(data.data);
-      setFilteredData(dataArray);
-      const forEdit = dataArray.filter(item => item._id === chapterFromNovelId);
-      if (forEdit.length === 1){
-        setItemContent(forEdit[0].content)
-      }
-      
-      
-    }
-    chapterByNovelId();
-   
+    dispatch(changeCheckChapterContent(itemContent));
   }, [chapterFromNovelId])
 
   const handleEditorAdd = (text) => {
     setContent(text)
-    dispatch(changeChapterContent(content));
+    dispatch(changeChapterContent(text));
   }
 
   const handleEditorEdit = (text) => {
     setItemContent(text)
-    dispatch(changeChapterContent(itemContent));
+    dispatch(changeChapterContent(text));
   }
   
 
@@ -64,8 +74,6 @@ const ContentChpaterScreen = ({route, navigation}) => {
               ref={richText}
               onChange={handleEditorEdit}
               initialContentHTML={itemContent}
-              
-              // disabled={true}
           />
         </KeyboardAvoidingView>
       </ScrollView>

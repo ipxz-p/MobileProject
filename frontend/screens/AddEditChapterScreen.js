@@ -18,11 +18,6 @@ const AddEditChapterScreen = ({route, navigation}) => {
   const [filteredData, setFilteredData] = useState([]);
   const dispatch = useDispatch();
 
-  const [images, setImages] = useState([]);
-  const [checkChangeImg, setCheckChangeImg] = useState(false);
-  const [pathImg, setPathImg] = useState('');
-  const [uriImg, setUriImg] = useState('');
-  const [nameImg, setNameImg] = useState('');
 
   useEffect(() => {
 

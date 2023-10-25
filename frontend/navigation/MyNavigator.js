@@ -1,6 +1,6 @@
 // import library ที่จำเป็น
 //<<Ing>> import library
-import React from "react";
+import React, { useState } from "react";
 import { View, Text, Button, TouchableOpacity, StyleSheet } from 'react-native'
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -48,7 +48,8 @@ const MainTabNavigator = createBottomTabNavigator();
 const WriteNavigator = createNativeStackNavigator();
 const ProfilesNavigator = createNativeStackNavigator();
 
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { changeChapterContent, changeCheckChapterContent } from '../store/actions/paramsAction';
 
 // สร้าง function สำหรับการกำหนด Navigator แต่ละตัว
 // <<Ing>> Tab Navigator Home Reading Writing Profile
@@ -197,12 +198,17 @@ function WritingNavigator({route, navigation}){
   const novelFromUserId = useSelector((state) => state.params.novelFromUserId);
   const chapterTitle = useSelector((state) => state.params.chapterTitle);
   const chapterContent = useSelector((state) => state.params.chapterContent);
+  const checkChapterContent = useSelector((state) => state.params.checkChapterContent);
   const chapterFromNovelId = useSelector((state) => state.params.chapterFromNovelId);
+  const dispatch = useDispatch();
+  const [content, setContent] = useState('');
+
 
   const onSubmitFormHandler = async () => {
 
     if (!chapterContent.trim()) {
       alert("กรุณาเพิ่มเนื้อหา");
+      return
     }
 
     try {
@@ -214,6 +220,7 @@ function WritingNavigator({route, navigation}){
   
       if (response.status === 200) {
         alert('สร้างตอนเรียบร้อยแล้ว');
+        dispatch(changeChapterContent(''));
         navigation.navigate('WritingScreen');
       } 
       
@@ -222,25 +229,41 @@ function WritingNavigator({route, navigation}){
     }
    
   }
- 
+
+  console.log('check content : ' + checkChapterContent);
+  console.log('content : ' + chapterContent);
+
   const onUpdateFormHandler = async () => { 
 
     try {
+
+        if (chapterContent === '') {
+        setContent(checkChapterContent);
+        alert('ไม่แก้เนื้อหา')
+  
+        } else if (chapterContent !== '') {
+        setContent(chapterContent);
+        alert('แก้เนื้อหา')
+      }
+
       const response = await axios.put(`http://10.0.2.2:3500/novel/editChapter`, {
         novelId: novelFromUserId,
         chapterId : chapterFromNovelId,
         title: chapterTitle,
-        content: chapterContent
+        content: content
       })
   
       if (response.status === 200) {
         alert('แก้ไขตอนเรียบร้อยแล้ว');
         navigation.navigate('WritingScreen');
+        dispatch(changeChapterContent(''));
+        dispatch(changeCheckChapterContent(''));
       } 
       
     } catch (error) {
       console.log("ในการแก้ไขตอน : " + error.message); 
     }
+    
    
   }
 

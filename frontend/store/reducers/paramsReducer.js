@@ -1,5 +1,6 @@
 import {GOTO_CATEGORY, NOVEL_ID, CHAPTER_ID, NOVELIDTOBSH_ID, AUTHOR_ID, CHAPTER_INDEX,
-    USER_ID , NOVEL_FROM_USER_ID, CHAPTER_TITLE, CHAPTER_CONTENT, CHAPTER_FROM_NOVEL_ID , IMG_FROM_NOVEL_ID} from "../actions/paramsAction";
+    USER_ID , NOVEL_FROM_USER_ID, CHAPTER_TITLE, CHAPTER_CONTENT, CHAPTER_FROM_NOVEL_ID , IMG_FROM_NOVEL_ID,
+    AGE_FROM_USER_ID, CHECK_CHAPTER_CONTENT} from "../actions/paramsAction";
 
 const initialState = {
     // ing
@@ -19,6 +20,8 @@ const initialState = {
     chapterContent: '',
     chapterFromNovelId: '',
     imgFromNovelId: '',
+    ageFromUserId: 0,
+    checkChapterContent: '',
 };
 
 const paramsReducer = (state = initialState, action) => {
@@ -60,6 +63,12 @@ const paramsReducer = (state = initialState, action) => {
     }
     if (action.type === IMG_FROM_NOVEL_ID) {
         return {...state, imgFromNovelId: action.imgFromNovelId}
+    }
+    if (action.type ===  AGE_FROM_USER_ID) {
+        return {...state, ageFromUserId: action.ageFromUserId}
+    }
+    if (action.type ===  CHECK_CHAPTER_CONTENT) {
+        return {...state, checkChapterContent: action.checkChapterContent}
     }
 
     return state;

@@ -15,7 +15,7 @@ import axios from "axios";
 import { Feather, AntDesign } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { changeChapterIndex } from "../store/actions/paramsAction";
-import {actions, RichEditor} from "react-native-pell-rich-editor";
+import {RichEditor} from "react-native-pell-rich-editor";
 
 const ChapterFiction = ({ route, navigation }) => {
   const chapterId = useSelector((state) => state.params.chapterId);
