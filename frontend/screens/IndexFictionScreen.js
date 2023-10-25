@@ -8,6 +8,7 @@ import {
   Animated,
   TouchableOpacity,
   FlatList,
+  TouchableWithoutFeedback,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { AntDesign, Ionicons, FontAwesome } from "@expo/vector-icons";
@@ -46,28 +47,41 @@ const IndexFiction = ({ route, navigation }) => {
     }).then((response) => setFollow(response.data))
     .catch((err) => console.log(err));
   }
-
+  const fetchNovels = () => {
+    axios
+      .get("http://10.0.2.2:3500/novel/getNovels")
+      .then((response) => setNovel(response.data))
+      .catch((err) => console.log(err));
+  };
   useEffect(() => {
     setBook()
     setFol()
     axios
-      .get("http://10.0.2.2:3500/novel/getNovels")
-      .then((response) => {
-        setNovel(response.data)
-      })
-      .catch((err) => console.log(err));
-    axios
       .get("http://10.0.2.2:3500/novel/getNovel", {
         params: {
-          novelId: novelId
+          novelId: novelId,
+          userId: userId,
+          
         }
       })
       .then((response) => {
         setOneNovel(response.data)
       })
       .catch((err) => console.log(err));
+    fetchNovels();
+    // Set up an interval to fetch novels every second
+    const intervalId = setInterval(() => {
+      fetchNovels();
+    }, 3000); // 1000 milliseconds = 1 second
+
+    // Clean up the interval when the component unmounts
+    return () => {
+      clearInterval(intervalId);
+    };
+    
   }, []);
 
+  
 
   const onBookShelfHandler = async (event) => {
     try {
@@ -76,6 +90,7 @@ const IndexFiction = ({ route, navigation }) => {
         userId,
       });
       if (response.status === 200) {
+        // alert(userId);
         setBook()
       } else {
         throw new Error("An error has occurred1");
@@ -117,15 +132,20 @@ const IndexFiction = ({ route, navigation }) => {
   // const toggleFollow = () => {
   //   setFollow(!Follow);
   // };
-
+  const LikeHandler = (chapterId) => {
+    axios.post("http://10.0.2.2:3500/novel/addOrRemoveLike",  {
+        novelId: novelId,
+        chapterId: chapterId,
+        userId: userId
+    }).then((res)=>fetchNovels())
+    // console.log(userId);
+  }
   const renderNovel = ({ item }) => {
     return item._id === novelId ? (
       <View>
         <Image
           style={styles.titleimage}
-          source={{
-            uri: "https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562",
-          }}
+          source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}}
         />
         {/* ในกล่องทั้งหมด */}
         <View style={{ marginTop: 260 }}>
@@ -206,10 +226,8 @@ const IndexFiction = ({ route, navigation }) => {
               {/* 3 ปุ่มข้างล่าง */}
               <View
                 style={{
-                  margin: 5,
                   flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "center",
+                  margin: 10
                 }}
               >
                 <TouchableOpacity
@@ -218,13 +236,12 @@ const IndexFiction = ({ route, navigation }) => {
                   <View
                     style={{
                       flexDirection: "row",
-                      marginLeft: 5,
-                      marginRight: 5,
                       padding: 10,
                       paddingLeft: 30,
                       paddingRight: 30,
                       backgroundColor: "#AF97E4",
                       borderRadius: 8,
+                      marginLeft: 10
                     }}
                   >
                     {BookShelf.some(item => item._id === novelId) ? (
@@ -238,20 +255,14 @@ const IndexFiction = ({ route, navigation }) => {
                         color: "#fff",
                         fontWeight: "bold",
                         fontSize: 15,
-                        marginLeft: 4,
+                        marginLeft: 1,
                       }}
-                    >
-                      เพิ่มลงชั้นหนังสือ
-                    </Text>
+                    > เพิ่มลงชั้นหนังสือ</Text>
                   </View>
                 </TouchableOpacity>
 
                 
-                <TouchableOpacity
-                onPress={() => {
-                  toggleIconReport();
-                }}
-                >
+                
                 <View
                   style={{
                     flexDirection: "row",
@@ -260,7 +271,7 @@ const IndexFiction = ({ route, navigation }) => {
                     padding: 10,
                     paddingLeft: 30,
                     paddingRight: 30,
-                    backgroundColor: "#FF6B7D",
+                    backgroundColor: "#fff",
                     borderRadius: 8,
                   }}
                 >
@@ -277,9 +288,8 @@ const IndexFiction = ({ route, navigation }) => {
                       fontSize: 15,
                       marginLeft: 4,
                     }}
-                  > รายงาน </Text>
+                  >  </Text>
                 </View>
-                </TouchableOpacity>
                 
 
               </View>
@@ -327,8 +337,10 @@ const IndexFiction = ({ route, navigation }) => {
                     padding: 10,
                     borderColor: "#dcdcdc",
                     borderWidth: 1,
+                    flexDirection: 'row'
                   }}
                 >
+                  <View>
                   <Text style={{ fontSize: 18, marginLeft: 2 }}>#{i + 1}</Text>
                   <Text
                     style={{ fontWeight: "bold", fontSize: 18, marginLeft: 4 }}
@@ -347,7 +359,7 @@ const IndexFiction = ({ route, navigation }) => {
                         marginTop: 5,
                       }}
                     >
-                      <AntDesign name="hearto" size={19} color="#7B7D7D" />
+                        <AntDesign name="hearto" size={19} color="#7B7D7D" />
                       {/* ไอคอนเมื่อกดถูกใจแล้ว */}
                       {/* <AntDesign name="heart" size={19} color="#7B7D7D" /> */}
                       <Text style={{ marginLeft: 10 }}>
@@ -389,10 +401,29 @@ const IndexFiction = ({ route, navigation }) => {
                       </Text>
                     </View>
                   </View>
+                  </View>
+                  <View style={{alignItems: 'center', justifyContent: 'center', flex: 1}}>
+                      {/* ไอคอนไลค์ */}
+                      <TouchableWithoutFeedback onPress={()=>LikeHandler(item.chapter[i]._id)}>
+                        {
+                          Novel.length && item.chapter[i].like.includes(userId) ? (
+                            <AntDesign name="heart" size={35} color="#FF6B7D" />
+                          ) : (
+                          <AntDesign name="hearto" size={35} color="#FF6B7D" />
+                          )
+                        }
+                      </TouchableWithoutFeedback>
+                      {/* ไอคอนเมื่อกดถูกใจแล้ว */}
+                  </View>
+
                 </View>
+
               </TouchableOpacity>
+              
               {/* End Box ตอนที่ */}
+              
             </View>
+            
           </View>
         );
       }
@@ -402,21 +433,24 @@ const IndexFiction = ({ route, navigation }) => {
 
   return (
     <View>
-      
+      <ScrollView>
       <FlatList
         data={Novel}
         keyExtractor={(item) => item._id}
         renderItem={renderNovel}
         // numColumns={14}
       />
-      <Button title="qwe" onPress={()=>console.log(oneNovel.owner)} />
-      <Button title="id" onPress={()=>console.log(userId)} />
+      {/* <Button title="qwe" onPress={()=>console.log(oneNovel.owner)} />
+      <Button title="id" onPress={()=>console.log(userId)} /> */}
+      
       <FlatList
         data={Novel}
         keyExtractor={(item) => item._id}
         renderItem={renderChapter}
         // numColumns={14}
       />
+      </ScrollView>
+      
     </View>
   );
 };

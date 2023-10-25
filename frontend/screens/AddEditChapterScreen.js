@@ -2,11 +2,10 @@ import { StyleSheet, View, Text, TouchableOpacity, Image, TextInput, Switch, Scr
 import { LinearGradient } from 'expo-linear-gradient';
 import React, {useState, useEffect} from 'react'
 import { useSelector, useDispatch } from 'react-redux';
-import { changeChapterTitle} from '../store/actions/paramsAction';
+import { changeChapterTitle,changeChapterContent, changeCheckChapterContent }  from '../store/actions/paramsAction';
+import {  } from '../store/actions/paramsAction';
 import axios from 'axios'
-import * as FileSystem from 'expo-file-system';
-import * as ImagePicker from 'expo-image-picker';
-import { MaterialIcons} from "@expo/vector-icons";
+
 
 const AddEditChapterScreen = ({route, navigation}) => {
 
@@ -27,16 +26,14 @@ const AddEditChapterScreen = ({route, navigation}) => {
         novelId: novelFromUserId
       }
     })
+    dispatch(changeCheckChapterContent(''));
     const dataArray = Object.values(data.data);
     setFilteredData(dataArray);
     const forEdit = dataArray.filter(item => item._id === chapterFromNovelId);
     if (forEdit.length === 1){
       setItemTitle(forEdit[0].title)
     }
-    
-    
   }
-
 
   chapterByNovelId();
  

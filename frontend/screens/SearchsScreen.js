@@ -1,10 +1,12 @@
-import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, ActivityIndicator, FlatList } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, ScrollView, ActivityIndicator, FlatList, Button } from 'react-native'
 import React, { useState, useEffect } from 'react'
 import { AntDesign, Ionicons, FontAwesome5 } from '@expo/vector-icons'; 
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { changeNovelId, gotoCategory } from "../store/actions/paramsAction";
 import filter from "lodash.filter"
+import { useSelector } from "react-redux";
+
 const SearchsScreen = ({route, navigation}) => {
   const [isLoading, setIsLoading] = useState(false);
   const [data, setData] = useState([]);
@@ -12,9 +14,9 @@ const SearchsScreen = ({route, navigation}) => {
   const [fullData, setFullData] = useState([]);
   const [searchQuery, setSearchQuery] = useState("");
   const dispatch = useDispatch();
+  const ageFromUserId = useSelector((state) => state.params.ageFromUserId)
   useEffect(() => {
     setIsLoading(true);
-  
     axios
       .get("http://10.0.2.2:3500/novel/getNovels")
       .then((response) => {
@@ -63,7 +65,7 @@ const SearchsScreen = ({route, navigation}) => {
       <View>
         <TouchableOpacity onPress={() => { novelIdHandler(navigation, item._id); }}>
     <View style={styles.boxnoti}>
-      <Image style={styles.imagebox} source={require('../assets/title_fiction2.jpg')} />
+      <Image style={styles.imagebox} source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}} />
       <View>
       <Text style={styles.textbox1}>{item.title}</Text>
       <View style={styles.usercard}>
@@ -72,9 +74,9 @@ const SearchsScreen = ({route, navigation}) => {
       </View>
       <View style={styles.count}>
         <Ionicons name="eye" size={18} color="#909090" />
-        <Text style={styles.textbox2}> {item.views.length}  </Text>
+        <Text style={styles.textbox2}> {item.chapterViewsSum}  </Text>
         <Ionicons name="heart-sharp" size={18} color="#909090" />
-        <Text style={styles.textbox2}> {item.like.length}</Text>
+        <Text style={styles.textbox2}> {item.chapterLikeSum}</Text>
       </View>
       </View>
     </View>
@@ -104,12 +106,13 @@ const SearchsScreen = ({route, navigation}) => {
 
       
 
-  <ScrollView style={{borderRadius: 10,}}>
+  <ScrollView style={{borderRadius: 10, marginBottom:100}}>
     <FlatList
       data={data}
       keyExtractor={(item) => item._id}
       renderItem={renderNovel}
     />
+    <View style={{marginBottom:30}}></View>
   </ScrollView>
 
 

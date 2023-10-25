@@ -32,20 +32,14 @@ const ContentChpaterScreen = ({route, navigation}) => {
         const forEdit = dataArray.filter(item => item._id === chapterFromNovelId);
         if (forEdit.length === 1){
           setItemContent(forEdit[0].content)
-         
-  
+
         }
-        
       }
       chapterByNovelId();
-      
+
     }, [chapterFromNovelId])
   )
  
-  useEffect(() => {
-
-    dispatch(changeCheckChapterContent(itemContent));
-  }, [chapterFromNovelId])
 
   const handleEditorAdd = (text) => {
     setContent(text)

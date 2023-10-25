@@ -7,16 +7,14 @@ import {
   TextInput,
   FlatList,
   Button,
-  KeyboardAvoidingView,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import { Feather, AntDesign } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
+import {actions, RichEditor} from "react-native-pell-rich-editor";
 import { changeChapterIndex } from "../store/actions/paramsAction";
-import {RichEditor} from "react-native-pell-rich-editor";
-
 const ChapterFiction = ({ route, navigation }) => {
   const chapterId = useSelector((state) => state.params.chapterId);
   const novel2Id = useSelector((state) => state.params.novel2Id);
@@ -26,13 +24,13 @@ const ChapterFiction = ({ route, navigation }) => {
   const [hasFetchedData, setHasFetchedData] = useState(true);
   const dispatch = useDispatch();
   const [IconLike, setIconLike] = useState(true);
-  const richText = React.useRef();
-
+  const userId = useSelector((state) => state.params.userId);
+  const [ChapterId2, setChapterId2] = useState(chapterId);
   //SendComment authorเอามาจากเบอีกที novel2Id chapterId มีแล้ววววว
   const [comment, setComment] = useState("");
-  const [author, setAuthor] = useState("652eb1a5edb9ff81b4d2e38b");
-  const [novelId, setNovelId] = useState(novel2Id)
-  const [index, setIndex] = useState(0)
+  const [novelId, setNovelId] = useState(novel2Id);
+  const [index, setIndex] = useState(0);
+  const [TestComment, setTestComment] = useState("");
   const toggleIconLike = () => {
     setIconLike(!IconLike);
   };
@@ -42,49 +40,81 @@ const ChapterFiction = ({ route, navigation }) => {
   };
   const onSubmitFormHandler = async (event) => {
     try {
-      const response = await axios.post(`http://10.0.2.2:3500/novel/sendComment`, {
-        novelId,
-        chapterId,
-        author,
-        comment
-      });
-
+      const response = await axios.post(
+        `http://10.0.2.2:3500/novel/sendComment`,
+        {
+            novelId: novelId,
+            chapterId: chapterId,
+            author: userId,
+            comment: comment,
+        }
+      );
       if (response.status === 200) {
-        alert("แสดงความคิดเห็นสำเร็จ");
+        fetchData()
+        // alert("แสดงความคิดเห็นสำเร็จ");
         setComment("");
       } else {
         throw new Error("An error has occurred1");
       }
     } catch (error) {
-      alert("An error has occurred2");
+      alert(error);
       setIsLoading(false);
     }
   };
 
-
-  useEffect(() => {
-    setIndex(chapterIndex)
-    async function fetchData() {
-      try {
-        const response = await axios.get(
-          "http://10.0.2.2:3500/novel/getChapters",
-          {
-            params: {
-              novelId: novel2Id,
-            },
+  const onDeleteCommentHandler = async (event) => {
+    try {
+      const response = await axios.delete(
+        `http://10.0.2.2:3500/novel/deleteComment`,
+        { 
+          data: {
+            novelId: novelId,
+            chapterId: chapterId,
+            commentId: event,
           }
-        );
-        setNovel(response.data);
-        // console.log(response.data);
-      } catch (err) {
-        console.log(err);
+        }
+      );
+
+      if (response.status === 200) {
+        fetchData()
+        alert("ลบสำเร็จ");
+      } else {
+        throw new Error("An error has occurred1");
       }
+    } catch (error) {
+      alert("An error has occurred2");
     }
-      fetchData()
+  };
+  async function fetchData() {
+    try {
+      const response = await axios.get(
+        "http://10.0.2.2:3500/novel/getChapters",
+        {
+          params: {
+            novelId: novel2Id,
+          },
+        }
+      );
+      setNovel(response.data);
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  useEffect(() => {
+    axios.get("http://10.0.2.2:3500/novel/getChapter", {
+      params: {
+        novelId: novel2Id,
+        chapterId: chapterId,
+        userId: userId
+      },
+    })
+    setIndex(chapterIndex);
+    fetchData();
   }, []);
 
   const renderComment = ({ item }) => {
-    if (item._id === chapterId) {
+    if (item._id === Novel[index]._id) {
+      // setChapterId2(Novel[index]._id)
       var myChapter = [];
       myChapter.push(
         <Text
@@ -129,7 +159,14 @@ const ChapterFiction = ({ route, navigation }) => {
                 >
                   {item.comments[i].author.username}
                 </Text>
-                <Feather name="trash-2" size={20} color="#7B7D7D" />
+                {/* ลบคอมเม้น */}
+                <TouchableOpacity
+                  onPress={() => {
+                    onDeleteCommentHandler(item.comments[i].author._id === userId ? item.comments[i]._id : null);
+                  }}
+                >
+                  {item.comments[i].author._id === userId ? <Feather name="trash-2" size={20} color="#FF6B7D" /> : <View></View>}
+                </TouchableOpacity>
               </View>
               <Text style={{ padding: 8 }}>{item.comments[i].comment}</Text>
             </View>
@@ -159,9 +196,6 @@ const ChapterFiction = ({ route, navigation }) => {
         {/* เนื้อเรื่อง */}
         <View style={{ margin: 15 }}>
           <Text style={{ fontSize: 16 }}>{item.content}</Text>
-
-          
-
         </View>
         {/* จบบบบบบ เนื้อเรื่อง */}
       </View>
@@ -192,45 +226,64 @@ const ChapterFiction = ({ route, navigation }) => {
         keyExtractor={(item) => item._id}
         renderItem={renderNextChapter}
       /> */}
-        {Novel ? 
-        <View>
-          <Text>{Novel[index].title}</Text>
-          {/* <Text>{Novel[index].content}</Text> */}
-          <ScrollView>
-          <RichEditor initialContentHTML={Novel[index].content} disabled={true} editorStyle={{color: 'black',backgroundColor: null}}/>
-          </ScrollView>
-        </View>
-         : null}
-        {/* <TouchableOpacity onPress={()=>console.log("test")}><Text>ตอนต่อไป TEST</Text></TouchableOpacity> */}
 
-        {/* ปุ่มมมมมมตอนต่อไป */} 
-        {
+        {/* {Novel ? setTestComment(Novel[index]._id) : null} */}
+        {Novel ? (
+          <View>
+            <View>
+              {/* <Text style={{fontSize: 15, textAlign: 'center', margin: 10, color: '#7B7D7D', marginTop: 30}}>เรื่อง {novel2Id}</Text> */}
+              <View style={{ marginTop: 30 }}></View>
+              <Text
+                style={{
+                  fontWeight: "bold",
+                  fontSize: 18,
+                  textAlign: "center",
+                  margin: 10,
+                }}
+              >
+                ตอนที่{index + 1} {Novel[index].title}
+                {/* -----{Novel[index]._id} */}
+              </Text>
+              {/* เนื้อเรื่อง */}
+              <View style={{ margin: 15 }}>
+              <RichEditor initialContentHTML={Novel[index].content} disabled={true} editorStyle={{color: 'black',backgroundColor: null}}/>
+                {/* <Text style={{ fontSize: 16 }}>{Novel[index].content}</Text> */}
+              </View>
+              {/* จบบบบบบ เนื้อเรื่อง */}
+            </View>
+          </View>
+        ) : null}
+
+        {/* ปุ่มมมมมมตอนต่อไป */}
+        {/* {
           index !== 0 ?
-          <TouchableOpacity style={styles.addButton2} onPress={()=>setIndex(index-1)}>
-          <Text>ตอนก่อนหน้า</Text>
+          <TouchableOpacity style={styles.addButton} onPress={()=>setIndex(index-1)}>
+          <Text style={{color: '#FE83EA', fontWeight: "bold", fontSize: 15,}}>ตอนก่อนหน้า</Text>
         </TouchableOpacity> : null
         }
         {
           Novel && (index+1 < Novel.length) ? 
-          <TouchableOpacity style={styles.addButton2} onPress={()=>setIndex(index+1)}>
-          <Text>ตอนต่อไป</Text>
+          <TouchableOpacity style={styles.addButton} onPress={()=>setIndex(index+1)}>
+          <Text style={{color: '#FE83EA', fontWeight: "bold", fontSize: 15,}}>ตอนต่อไป</Text>
         </TouchableOpacity>: null
-        }
-        
+        } */}
+
         {/* <TouchableOpacity onPress={setIndex(index+1)}>ตอนต่อไป</TouchableOpacity>
           <TouchableOpacity onPress={setIndex(index-1)}>ตอนก่อนหน้า</TouchableOpacity> */}
 
         {/* ปุ่มกดถูกใจจ้าาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาาา!!!!!!!!!! */}
-      {/* <TouchableOpacity onPress={() => { toggleIconLike(); }}>
+        {/* <TouchableOpacity onPress={() => { toggleIconLike(); }}>
         <View style={{ backgroundColor: "#FE83EA",}}>
           {IconLike ? 
             (<AntDesign name="hearto" size={24} color="#fff" />) : ( <AntDesign name="heart" size={23} color="red" />)
           }
         </View>
+        
       
       </TouchableOpacity> */}
         {/* จบบบบ ปุ่มมมมมมตอนต่อไป */}
         {/* ความคิดเห็นนนนนนนนนนน */}
+        {/* <Button title="qwe" onPress={()=>console.log(userId)} /> */}
         <View>
           <Text
             style={{
@@ -257,7 +310,10 @@ const ChapterFiction = ({ route, navigation }) => {
             value={comment}
             onChangeText={onChangeCommentHandler}
           ></TextInput>
-          <TouchableOpacity style={styles.addButton2} onPress={onSubmitFormHandler}>
+          <TouchableOpacity
+            style={styles.addButton2}
+            onPress={onSubmitFormHandler}
+          >
             <Text style={{ color: "#fff", fontSize: 18 }}>ส่งความคิดเห็น</Text>
           </TouchableOpacity>
         </View>
@@ -284,6 +340,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     padding: 10,
     borderRadius: 20,
+    margin: 10,
   },
   addButton2: {
     backgroundColor: "#FE83EA",

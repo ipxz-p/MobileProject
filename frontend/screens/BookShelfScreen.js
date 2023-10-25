@@ -1,4 +1,4 @@
-import { StyleSheet, View, Text, TouchableOpacity, Image, TouchableHighlight, ScrollView, FlatList, Button} from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity, Image, SafeAreaView , ScrollView, FlatList, Button} from 'react-native'
 import React, {useEffect, useState} from 'react'
 import { Ionicons, Octicons, MaterialCommunityIcons , FontAwesome } from "@expo/vector-icons";
 import { LinearGradient } from 'expo-linear-gradient';
@@ -33,27 +33,65 @@ const BookShelfScreen = ({route, navigation}) => {
 
     // Clear the interval when the component unmounts
     return () => clearInterval(interval);
-  }, []); //[novId]
+  }); //[novId]
 
   //กดไปหน้าnovel
-  // const novelIdHandler = (navigation, novel3Id) => {
-  //   console.log(novel3Id);
-  //   dispatch(changeNovelId(novel3Id));
-  //   navigation.navigate("IndexFiction");
-  // };
+  const novelIdHandler = (navigation, novel3Id) => {
+    dispatch(changeNovelId(novel3Id));
+    navigation.navigate("IndexFiction");
+  };
 
 
   const renderNovel = ({ item }) => {
     return (
-      <View>
-          <Text>{item.title}</Text>
+      <TouchableOpacity onPress={() => { novelIdHandler(navigation, item._id); }}>
+<View>
+          <View style={styles.myFiction}>
+    {/* กล่องนิยายแต่ละเรื่อง*/}
+      {/* รูปปกนิยายและข้อมูลนิยาย */}
+        <View style={styles.view1}>
+          {/* รูปปกนิยาย */}
+          <View style={styles.view1_1}>
+            <Image style={{height: 91, width: 91, resizeMode: 'contain', borderRadius: 10}} source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}}></Image>
+          </View>
+          
+          {/* ข้อมูลนิยาย */}
+          <View>
+            {/* ชื่อนิยาย */}
+            <Text style={{fontWeight: '400', fontSize: 16, marginBottom: 10,}}>{item.title}</Text>
+            {/* อิโมจิและชื่อนักเขียน */}
+            <View style={styles.view1_2}>
+              {/* อิโมจิ */}
+              <Octicons style={{marginRight: 12}} name="person-fill" size={17} color="#909090" /> 
+              {/* ชื่อนักเขียน */}
+              <Text style={{ fontSize: 14, color: '#909090'}}>{item.owner.username}</Text>
+            </View>
+            {/* จำนวนคนดู  กดหัวใจ ปุ่มอ่านเลย */}
+            <View style={styles.view1_3}>
+              <View style={{flexDirection: 'row'}}>
+                
+              </View>
+              
+              {/* ปุ่มอ่านเลย */}
+              <LinearGradient colors={['#FBBC2C', '#FE8F7C']} style={styles.btnreadgradient} >
+                <TouchableOpacity style={styles.btnreadnow} onPress={() => { novelIdHandler(navigation, item._id); }}>
+                    <Text style={styles.btnreadnowtext}>อ่านเลย</Text>
+                </TouchableOpacity>
+              </LinearGradient>
+              
+            </View>
+          </View>
+        </View>
+        </View>
       </View>
+      </TouchableOpacity>
+      
     ) 
   }
 
   return (
-    <View>
-      <ScrollView>
+    
+      <View>
         {/* ส่งชื่อนิยายมาได้แล้ว ต้องเอานิยายนี้มาเพิ่มใน db ของ user นี้ก่อน ละก็ render นิยายทั้งหมดของ user นี้
         ถ้ามีการส่ง Novel3Id มาซ้ำ ให้ลบออกจากชั้นหนังสือ  */}
         <FlatList
@@ -61,16 +99,10 @@ const BookShelfScreen = ({route, navigation}) => {
           renderItem={renderNovel}
           keyExtractor={(item) => item._id}
           />
-        <Text></Text>
-        <Text>จำนวนนิยายในชั้นหนังสือ: {Novel.length}</Text>
-  </ScrollView>
-      {/* <Button
-        title="อ่านเลย"
-        onPress={() => {
-          navigation.navigate("IndexFiction")
-        }}
-      /> */}
-    </View>
+        {/* <Text>จำนวนนิยายในชั้นหนังสือ: {Novel.length}</Text> */}
+        </View>
+      
+    
   )
 }
 const styles = StyleSheet.create({

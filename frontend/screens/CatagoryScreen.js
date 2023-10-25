@@ -30,7 +30,7 @@ function CatagoryScreen({ route, navigation }) {
         
         <TouchableOpacity onPress={() => { novelIdHandler(navigation, item._id); }}>
     <View style={styles.boxnoti}>
-      <Image style={styles.imagebox} source={require('../assets/title_fiction2.jpg')} />
+      <Image style={styles.imagebox} source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}} />
       <View>
       <Text style={styles.textbox1}>{item.title}</Text>
       <View style={styles.usercard}>
@@ -39,7 +39,7 @@ function CatagoryScreen({ route, navigation }) {
       </View>
       <View style={styles.count}>
         <Ionicons name="eye" size={18} color="#909090" />
-        <Text style={styles.textbox2}> {item.views.length}  </Text>
+        <Text style={styles.textbox2}> {item.chapterViewsSum}  </Text>
         <Ionicons name="heart-sharp" size={18} color="#909090" />
         <Text style={styles.textbox2}> {item.like.length}</Text>
       </View>

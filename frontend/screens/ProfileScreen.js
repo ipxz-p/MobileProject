@@ -14,6 +14,7 @@ import { changeAgeFromUserId } from '../store/actions/paramsAction';
 
 
 
+
 const ProfileScreen = ({route, navigation}) => {
 
   const dispatch = useDispatch();
@@ -43,23 +44,27 @@ const ProfileScreen = ({route, navigation}) => {
               userId: userId
             }})
 
-          const bday = data.data.dateOfBirth;
+        const bday = data.data.dateOfBirth;
 
-          // เช็คอายุว่าเกิน 18 มั้ยจ้า
+        if (!bday){
+          setdateOfBirth('กรุณาเลือกวันเกิด');
+        }
+        else if (bday){
+
           const dateNow = new Date();
           const dateBirth = new Date(bday);
           var age_now = dateNow.getFullYear() - dateBirth.getFullYear();
           var m = dateNow.getMonth() - dateBirth.getMonth();
           if (m < 0 || (m === 0 && dateNow.getDate() < dateBirth.getDate())) {
               age_now--;
+            }
+            dispatch(changeAgeFromUserId(age_now));
+            const formattedString = bday.split('T')[0];
+            setdateOfBirth(formattedString);
           }
-
-          dispatch(changeAgeFromUserId(age_now));
-         
-          const formattedString = bday.split('T')[0];
+          
           setUsername(data.data.username);
           setEmail(data.data.email);
-          setdateOfBirth(formattedString);
           setNameImg(data.data.profileImgPath);
           setUriImg(imgDir + data.data.profileImgPath);
           setPathImg(data.data.profileImgPath);

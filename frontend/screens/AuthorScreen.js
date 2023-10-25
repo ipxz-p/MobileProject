@@ -11,8 +11,10 @@ const Author = ({route, navigation}) => {
   const authorId = useSelector((state) => state.params.authorId);
   const [Author, setAuthor] = useState([]);
   const [Novel, setNovel] = useState([]);
+  const userId = useSelector((state) => state.params.userId);
   const [NovelNum, setNovelNum] = useState(0);
   const dispatch = useDispatch();
+  const [oneNovel, setOneNovel] = useState({})
 
 
 
@@ -21,7 +23,7 @@ const Author = ({route, navigation}) => {
       try {
         const response = await axios.get("http://10.0.2.2:3500/user/getAuthorFollower", {
           params: {
-            userId: "6507fbc03aaf2d233f5008a0"
+            userId: userId
           }
         })
         setAuthor(response.data);
@@ -37,7 +39,7 @@ const Author = ({route, navigation}) => {
       try {
         const response = await axios.get("http://10.0.2.2:3500/novel/getNovels", {
           params: {
-            userId: "6507fbc03aaf2d233f5008a0"
+            userId: userId
           }
         })
         setNovel(response.data);
@@ -59,13 +61,13 @@ const renderAuthor = ({ item }) => {
     return item._id === authorId ? (
       <View>
         <View style={{marginBottom:20}}></View>
-        <Image style={{height: 100, width: 100, borderRadius: 100, alignSelf: 'center', margin: 10}} source={require('../assets/auther.jpg')} />
+        <Image style={{height: 100, width: 100, borderRadius: 100, alignSelf: 'center', margin: 10}} source={{ uri: `http://10.0.2.2:3500/img/${item.profileImgPath}`}} />
       <Text style={{alignSelf: 'center', margin: 4}}>{item.username}</Text>
-      <LinearGradient colors={['#FBBC2C', '#FE8F7C']} style={{alignSelf: 'center', margin: 2, padding: 6, borderRadius: 8, paddingLeft: 22, paddingRight: 22}} >
+      {/* <LinearGradient colors={['#FBBC2C', '#FE8F7C']} style={{alignSelf: 'center', margin: 2, padding: 6, borderRadius: 8, paddingLeft: 22, paddingRight: 22}} >
         <TouchableOpacity style={styles.btnreadnow}>
           <Text style={{color: '#fff', fontWeight: 'bold'}}>ติดตามแล้ว</Text>
         </TouchableOpacity>
-      </LinearGradient>
+      </LinearGradient> */}
       {/* เรียงกัน (1) อัน */}
       <View style={{flexDirection: 'row', alignContent: 'center', justifyContent: 'center'}}>
         <View style={{flexDirection: 'row', marginLeft: 20, marginRight: 20, margin: 8}}>
@@ -90,7 +92,7 @@ const renderAuthor = ({ item }) => {
         <View style={styles.view1}>
           {/* รูปปกนิยาย */}
           <View style={styles.view1_1}>
-            <Image style={{height: 91, width: 91, resizeMode: 'contain', borderRadius: 10}} source={{ uri: 'https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562'}}></Image>
+            <Image style={{height: 91, width: 91, resizeMode: 'contain', borderRadius: 10}} source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}}></Image>
           </View>
           
           {/* ข้อมูลนิยาย */}
@@ -104,10 +106,10 @@ const renderAuthor = ({ item }) => {
               <View style={{flexDirection: 'row'}}>
                 {/* จำนวนคนดู */}
                 <Ionicons style={{marginRight: 2, marginTop: 1}} name="eye" size={17} color="#909090" />
-                <Text style={{ fontSize: 14, color: '#7B7D7D', marginRight: 8, marginTop: 1}}>{item.views.length}</Text>
+                <Text style={{ fontSize: 14, color: '#7B7D7D', marginRight: 8, marginTop: 1}}>{item.chapterViewsSum}</Text>
                 {/* จำนวนคนกดหัวใจ */}
                 <FontAwesome style={{marginRight: 2 , marginTop: 2,}} name="heart" size={15} color="#909090" />
-                <Text style={{ fontSize: 14, color: '#7B7D7D', marginRight: 8, marginTop: 1}}>{item.like.length}</Text>
+                <Text style={{ fontSize: 14, color: '#7B7D7D', marginRight: 8, marginTop: 1}}>{item.chapterLikeSum}</Text>
               </View>
             </View>
           </View>

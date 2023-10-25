@@ -8,22 +8,49 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { Ionicons, FontAwesome5 } from "@expo/vector-icons";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { changeNovelId, gotoCategory } from "../store/actions/paramsAction";
+import { changeNovelId, gotoCategory, changeImgFromNovelId } from "../store/actions/paramsAction";
 import { useSelector } from "react-redux";
+
+
+
+
 const HomeScreen = ({ route, navigation }) => {
+  const ageFromUserId = useSelector((state) => state.params.ageFromUserId)
   const [Novel, setNovel] = useState([]);
+  const [Recommend, setRecommend] = useState([]);
   const NewNovel = Novel.length - 1;
   const dispatch = useDispatch();
   useEffect(() => {
-    axios
-      .get("http://10.0.2.2:3500/novel/getNovels")
-      .then((response) => setNovel(response.data))
-      .catch((err) => console.log(err));
+    const fetchData = () => {
+      axios
+        .get("http://10.0.2.2:3500/novel/getNovels")
+        .then((response) => {
+          // จัดเรียงข้อมูลตามที่คุณต้องการ
+          const sortedData = response.data.sort((a, b) =>  b.chapterViewsSum - a.chapterViewsSum);
+  
+          // กำหนดข้อมูลที่ถูกจัดเรียงให้กับ state
+          setNovel(sortedData);
+          setRecommend(sortedData);
+        })
+        .catch((err) => console.log(err));
+    };
+  
+    fetchData();
+
+    // Set up an interval to fetch data every second
+    const intervalId = setInterval(() => {
+      fetchData();
+    }, 3000); // 1000 milliseconds = 1 second
+
+    // Clean up the interval when the component unmounts
+    return () => {
+      clearInterval(intervalId);
+    };
   }, []);
 
   const gotoCategoryHandler = (navigation, categoryType) => {
@@ -32,7 +59,6 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   const novelIdHandler = (navigation, novelId) => {
-    console.log(novelId);
     dispatch(changeNovelId(novelId));
     navigation.navigate("IndexFiction");
   };
@@ -50,9 +76,7 @@ const HomeScreen = ({ route, navigation }) => {
           <View style={styles.cardfiction}>
             <Image
               style={styles.imagecardfiction}
-              source={{
-                uri: "https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562",
-              }}
+              source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}}
             />
             <View>
               <Text style={styles.titlecardfiction}>{item.title}</Text>
@@ -63,9 +87,9 @@ const HomeScreen = ({ route, navigation }) => {
             </View>
             <View style={styles.count}>
               <Ionicons name="eye" size={18} color="#909090" />
-              <Text style={styles.txtcardfiction}> {item.views.length} </Text>
+              <Text style={styles.txtcardfiction}> {item.chapterViewsSum} </Text>
               <Ionicons name="heart-sharp" size={18} color="#909090" />
-              <Text style={styles.txtcardfiction}> {item.like.length} </Text>
+              <Text style={styles.txtcardfiction}> {item.chapterLikeSum} </Text>
             </View>
           </View>
           {/* End Card */}
@@ -75,7 +99,7 @@ const HomeScreen = ({ route, navigation }) => {
   };
 
   const renderAdultCatagory = ({ item }) => {
-    return item.category === "adult" ? (
+    return item.category === "adult" && ageFromUserId > 18 ?  (
       <View>
         <TouchableOpacity
           onPress={() => {
@@ -87,9 +111,7 @@ const HomeScreen = ({ route, navigation }) => {
           <View style={styles.cardfiction}>
             <Image
               style={styles.imagecardfiction}
-              source={{
-                uri: "https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562",
-              }}
+              source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}}
             />
             <View>
               <Text style={styles.titlecardfiction}>{item.title}</Text>
@@ -100,7 +122,7 @@ const HomeScreen = ({ route, navigation }) => {
             </View>
             <View style={styles.count}>
               <Ionicons name="eye" size={18} color="#909090" />
-              <Text style={styles.txtcardfiction}> {item.views.length} </Text>
+              <Text style={styles.txtcardfiction}> {item.chapterViewsSum} </Text>
               <Ionicons name="heart-sharp" size={18} color="#909090" />
               <Text style={styles.txtcardfiction}> {item.like.length} </Text>
             </View>
@@ -123,9 +145,7 @@ const HomeScreen = ({ route, navigation }) => {
           <View style={styles.cardfiction}>
             <Image
               style={styles.imagecardfiction}
-              source={{
-                uri: "https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562",
-              }}
+              source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}}
             />
             <View>
               <Text style={styles.titlecardfiction}>{item.title}</Text>
@@ -136,7 +156,7 @@ const HomeScreen = ({ route, navigation }) => {
             </View>
             <View style={styles.count}>
               <Ionicons name="eye" size={18} color="#909090" />
-              <Text style={styles.txtcardfiction}> {item.views.length} </Text>
+              <Text style={styles.txtcardfiction}> {item.chapterViewsSum} </Text>
               <Ionicons name="heart-sharp" size={18} color="#909090" />
               <Text style={styles.txtcardfiction}> {item.like.length} </Text>
             </View>
@@ -159,9 +179,7 @@ const HomeScreen = ({ route, navigation }) => {
           <View style={styles.cardfiction}>
             <Image
               style={styles.imagecardfiction}
-              source={{
-                uri: "https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562",
-              }}
+              source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}}
             />
             <View>
               <Text style={styles.titlecardfiction}>{item.title}</Text>
@@ -172,7 +190,7 @@ const HomeScreen = ({ route, navigation }) => {
             </View>
             <View style={styles.count}>
               <Ionicons name="eye" size={18} color="#909090" />
-              <Text style={styles.txtcardfiction}> {item.views.length} </Text>
+              <Text style={styles.txtcardfiction}> {item.chapterViewsSum} </Text>
               <Ionicons name="heart-sharp" size={18} color="#909090" />
               <Text style={styles.txtcardfiction}> {item.like.length} </Text>
             </View>
@@ -195,9 +213,7 @@ const HomeScreen = ({ route, navigation }) => {
           <View style={styles.cardfiction}>
             <Image
               style={styles.imagecardfiction}
-              source={{
-                uri: "https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562",
-              }}
+              source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}}
             />
             <View>
               <Text style={styles.titlecardfiction}>{item.title}</Text>
@@ -208,7 +224,7 @@ const HomeScreen = ({ route, navigation }) => {
             </View>
             <View style={styles.count}>
               <Ionicons name="eye" size={18} color="#909090" />
-              <Text style={styles.txtcardfiction}> {item.views.length} </Text>
+              <Text style={styles.txtcardfiction}> {item.chapterViewsSum} </Text>
               <Ionicons name="heart-sharp" size={18} color="#909090" />
               <Text style={styles.txtcardfiction}> {item.like.length} </Text>
             </View>
@@ -219,32 +235,26 @@ const HomeScreen = ({ route, navigation }) => {
     ) : null;
   };
 
-  return (
-    <View>
-      <ScrollView>
-        {/* Top of the week */}
-        {/* <LinearGradient colors={["#5652C9", "#8151C5"]}>
-          <Text style={styles.title}>นิยายมาใหม่ !</Text>
-          <View style={styles.box}>
+  const renderRecommend = ({ item }) => {
+    return (
+      <View style={styles.box}>
             <Image
               style={styles.titleimage}
-              source={{
-                uri: "https://media.discordapp.net/attachments/1133035711919038534/1150913957478006806/large.png?width=562&height=562",
-              }}
+              source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}}
             />
             <View style={styles.box2}>
-              <Text style={styles.txt1}>{Novel[NewNovel].title}</Text>
+              <Text style={styles.txt1}>{item.title}</Text>
               <View style={styles.user}>
                 <FontAwesome5 name="user-alt" size={17} color="#fff" />
                 <Text style={styles.txt2}>
                   {" "}
-                  {Novel[NewNovel].owner.username}
+                  {item.owner.username}
                 </Text>
               </View>
 
               <View style={styles.fictionlove}>
                 <Text style={styles.txt3}>
-                  {Novel[NewNovel].category == "love"
+                  {item.category == "love"
                     ? "นิยายรัก"
                     : Novel[NewNovel].category == "adult"
                     ? "นิยาย18+"
@@ -258,12 +268,12 @@ const HomeScreen = ({ route, navigation }) => {
                 </Text>
               </View>
 
-              <View style={styles.count}>
-                <Ionicons name="eye" size={19} color="#fff" />
-                <Text style={styles.txt4}> {Novel[NewNovel].views.length}</Text>
-                <Ionicons name="heart-sharp" size={19} color="#fff" />
-                <Text style={styles.txt4}> {Novel[NewNovel].like.length}</Text>
-              </View>
+              <View style={styles.count2}>
+              <Ionicons name="eye" size={18} color="#fff" />
+              <Text style={styles.txtcardfiction2}> {item.chapterViewsSum} </Text>
+              <Ionicons name="heart-sharp" size={18} color="#fff" />
+              <Text style={styles.txtcardfiction2}> {item.like.length} </Text>
+            </View>
 
               <LinearGradient
                 colors={["#FBBC2C", "#FE8F7C"]}
@@ -271,7 +281,7 @@ const HomeScreen = ({ route, navigation }) => {
               >
                 <TouchableOpacity
                   onPress={() => {
-                    navigation.navigate("IndexFiction");
+                    novelIdHandler(navigation, item._id);
                   }}
                   style={styles.btnreadnow}
                 >
@@ -280,7 +290,28 @@ const HomeScreen = ({ route, navigation }) => {
               </LinearGradient>
             </View>
           </View>
-        </LinearGradient> */}
+    );
+  };
+  
+  
+  return (
+    <View>
+      <ScrollView>
+        {/* Top of the week */}
+        <LinearGradient colors={["#5652C9", "#8151C5"]}>
+          <Text style={styles.title}>นิยายยอดนิยม !</Text>
+          {/* ตรงนี้ */}
+          <ScrollView horizontal={true}>
+            <View style={styles.rcmfiction}>
+              <FlatList
+                data={Novel}
+                keyExtractor={(item) => item._id}
+                renderItem={renderRecommend}
+                numColumns={14}
+              />
+            </View>
+          </ScrollView>
+        </LinearGradient>
 
         {/* somecomponent */}
         <View style={styles.somecomponent}>
@@ -301,8 +332,8 @@ const HomeScreen = ({ route, navigation }) => {
               </View>
             </TouchableOpacity>
             <TouchableOpacity
-              onPress={() => {
-                gotoCategoryHandler(navigation, "adult");
+              onPress={() => { ageFromUserId > 18 ?
+                gotoCategoryHandler(navigation, "adult") : null;
               }}
             >
               <View style={styles.categoryitem}>
@@ -403,10 +434,19 @@ const HomeScreen = ({ route, navigation }) => {
             </View>
           </ScrollView> */}
 
+
+          
+
+
+
           {/* หมวดหมู่นิยาย */}
           <Text style={styles.titleofall}>หมวดหมู่นิยาย</Text>
           {/* นิยายรัก */}
-          <Text style={styles.titleofall}>นิยายรัก</Text>
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold", marginLeft: 10, marginTop: 10, width: '40%' }}>นิยายรัก</Text>
+            
+          </View>
+          
           {/* ScrollView ไว้ copy */}
           <ScrollView horizontal={true}>
             <View style={styles.rcmfiction}>
@@ -422,7 +462,10 @@ const HomeScreen = ({ route, navigation }) => {
           </ScrollView>
 
           {/* นิยาย 18+ */}
-          <Text style={styles.titleofall}>นิยาย 18+</Text>
+          {ageFromUserId > 18 && <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold", marginLeft: 10, marginTop: 10, width: '40%' }}>นิยาย18+</Text>
+            
+          </View>}
           {/* ScrollView ไว้ copy */}
           <ScrollView horizontal={true}>
             <View style={styles.rcmfiction}>
@@ -438,7 +481,10 @@ const HomeScreen = ({ route, navigation }) => {
           </ScrollView>
 
           {/* นิยายวาย */}
-          <Text style={styles.titleofall}>นิยายวาย</Text>
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold", marginLeft: 10, marginTop: 10, width: '40%' }}>นิยายวาย</Text>
+            
+          </View>
           {/* ScrollView ไว้ copy */}
           <ScrollView horizontal={true}>
             <View style={styles.rcmfiction}>
@@ -454,7 +500,10 @@ const HomeScreen = ({ route, navigation }) => {
           </ScrollView>
 
           {/* นิยายแฟนตาซี */}
-          <Text style={styles.titleofall}>นิยายแฟนตาซี</Text>
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold", marginLeft: 10, marginTop: 10, width: '40%' }}>นิยายแฟนตาซี</Text>
+            
+          </View>
           {/* ScrollView ไว้ copy */}
           <ScrollView horizontal={true}>
             <View style={styles.rcmfiction}>
@@ -470,7 +519,10 @@ const HomeScreen = ({ route, navigation }) => {
           </ScrollView>
 
           {/* นิยายสืบสวน */}
-          <Text style={styles.titleofall}>นิยายสืบสวน</Text>
+          <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 15 }}>
+            <Text style={{ fontSize: 18, fontWeight: "bold", marginLeft: 10, marginTop: 10, width: '40%' }}>นิยายสืบสวน</Text>
+          
+          </View>
           {/* ScrollView ไว้ copy */}
           <ScrollView horizontal={true}>
             <View style={styles.rcmfiction}>
@@ -498,7 +550,7 @@ const styles = StyleSheet.create({
   },
   titleimage: {
     width: 130,
-    height: 200,
+    height: 190,
     borderRadius: 10,
   },
   title: {
@@ -514,6 +566,7 @@ const styles = StyleSheet.create({
     margin: 20,
     padding: 20,
     borderRadius: 20,
+    width: 355
   },
   box2: {
     marginLeft: 20,
@@ -538,7 +591,7 @@ const styles = StyleSheet.create({
   txt4: {
     color: "#fff",
     fontSize: 15,
-    marginBottom: 16,
+    marginBottom: 4,
     marginRight: 10,
   },
   fiction: {
@@ -547,15 +600,19 @@ const styles = StyleSheet.create({
   count: {
     flexDirection: "row",
   },
+  count2: {
+    flexDirection: "row",
+    marginBottom:10,
+    marginTop: 10
+  },
   user: {
     flexDirection: "row",
   },
   fictionlove: {
-    backgroundColor: "#EEBED3",
+    backgroundColor: "#F8C678",
     width: 100,
     height: 25,
     borderRadius: 8,
-    marginBottom: 16,
     marginRight: 5,
     flex: 1,
     justifyContent: "center",
@@ -672,6 +729,10 @@ const styles = StyleSheet.create({
   },
   txtcardfiction: {
     color: "#7B7D7D",
+  },
+  txtcardfiction2: {
+    color: "#fff",
+    
   },
   chaptercardchapter: {
     marginBottom: 5,

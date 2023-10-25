@@ -2,7 +2,7 @@
 //<<Ing>> import library
 import React, { useState } from "react";
 import { View, Text, Button, TouchableOpacity, StyleSheet } from 'react-native'
-import { NavigationContainer } from "@react-navigation/native";
+import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
@@ -118,7 +118,7 @@ function HomeNavigatorss({route, navigation}) {
         </View>
       )}} component={HomeScreen} />
         <HomeNavigator.Screen name="IndexFiction" options={{title:"IndexFiction", headerShown:false,}} component={IndexFictionScreen} />
-        <HomeNavigator.Screen name="ChapterFiction" options={{title:"ตอนที่ 1 แต่งงานกันนะไอต้าว"}} component={ChapterFictionScreen} />
+        <HomeNavigator.Screen name="ChapterFiction" options={{title:"ตอนนิยาย"}} component={ChapterFictionScreen} />
         <HomeNavigator.Screen name="Notifications" options={{title:"การแจ้งเตือน", headerShown:false,}} component={NotificationNavigator} />
         <HomeNavigator.Screen name="SearchsScreens" options={{headerShown:false,}} component={SerachsNavigator} />
         <HomeNavigator.Screen name="CatagorysNavigators" options={{headerShown:false,}} component={CatagorysNavigator} />
@@ -129,7 +129,7 @@ function NotificationNavigator(){
   return (
     <NotiNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
       <NotiNavigator.Screen name="Notificationss" options={{title:"การแจ้งเตือน",}} component={NotificationsScreen} />
-      <NotiNavigator.Screen name="ChapterFictionScreensssss" options={{title:"ตอนที่ 1 แต่งงานกันนะไอต้าว",headerBackTitleVisible: false}} component={ChapterFictionScreen} />
+      <NotiNavigator.Screen name="ChapterFictionScreensssss" options={{title:"ตอนนิยาย",headerBackTitleVisible: false}} component={ChapterFictionScreen} />
     </NotiNavigator.Navigator>
   )
 }
@@ -138,7 +138,7 @@ function SerachsNavigator(){
     <SearchNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
       <SearchNavigator.Screen name="Notificationss" options={{title:"Search",headerShown:false,}} component={SearchsScreen} />
       <SearchNavigator.Screen name="IndexFictionsssss" options={{title:"IndexFiction", headerShown:false,}} component={IndexFictionScreen} />
-      <SearchNavigator.Screen name="ChapterFictionScreennsssss" options={{title:"ตอนที่ 1 แต่งงานกันนะไอต้าว",headerBackTitleVisible: false}} component={ChapterFictionScreen} />
+      <SearchNavigator.Screen name="ChapterFictionScreennsssss" options={{title:"ตอนนิยาย",headerBackTitleVisible: false}} component={ChapterFictionScreen} />
     </SearchNavigator.Navigator>
   )
 }
@@ -156,7 +156,7 @@ function BookShelfsNavigator({route, navigation}){
     <BookShelfNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
       <BookShelfNavigator.Screen name="Bookshelf" options={{title:"ชั้นหนังสือ"}} component={BookShelfScreen} />
       <BookShelfNavigator.Screen name="IndexFiction" component={IndexFictionScreen} options={{headerShown:false,}}/>
-      <BookShelfNavigator.Screen name="ChapterFiction"  component={ChapterFictionScreen} options={{title:"ตอนที่ 1: แต่งงานกันนะไอต้าว" }}/>
+      <BookShelfNavigator.Screen name="ChapterFiction"  component={ChapterFictionScreen} options={{title:"ตอนนิยาย" }}/>
     </BookShelfNavigator.Navigator>
   )
 }
@@ -174,7 +174,7 @@ function CatagorysNavigator({route, navigation}){
     <CatagoryNavigator.Navigator initialRouteName="Catagory" screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
       <CatagoryNavigator.Screen name="Catagory" options={{title: categoryType == "love" ? "นิยายรัก" : categoryType == "adult" ? "นิยาย18+" : categoryType == "y" ? "นิยายวาย" : categoryType == "fantasy" ? "นิยายแฟนตาซี" : categoryType == "investigate" ? "นิยายสืบสวน" : "error"}} component={CatagoryScreen} />
       <CatagoryNavigator.Screen name="IndexFiction" component={IndexFictionScreen} options={{headerShown:false,}}/>
-      <CatagoryNavigator.Screen name="ChapterFiction"  component={ChapterFictionScreen} options={{title:"ตอนที่ 1: แต่งงานกันนะไอต้าว" }}/>
+      <CatagoryNavigator.Screen name="ChapterFiction"  component={ChapterFictionScreen} options={{title:"ตอนนิยาย" }}/>
     </CatagoryNavigator.Navigator>
   )
 }
@@ -185,7 +185,7 @@ function FollowsNavigator(){
   return(
     <FollowNavigator.Navigator screenOptions={{headerStyle:{backgroundColor: "#5752C9"}, headerTintColor: "white",}}>
       <FollowNavigator.Screen name="Follow" options={{title:"ติดตาม"}} component={FollowScreen} />
-      <FollowNavigator.Screen name="Author" options={{title:""}} component={AuthorScreen} />
+      <FollowNavigator.Screen name="Author" options={{title:"นักเขียน"}} component={AuthorScreen} />
       <BookShelfNavigator.Screen name="IndexFiction" component={IndexFictionScreen} options={{headerShown:false,}}/>
       <BookShelfNavigator.Screen name="ChapterFiction" component={ChapterFictionScreen} options={{}}/>
     </FollowNavigator.Navigator>
@@ -198,11 +198,8 @@ function WritingNavigator({route, navigation}){
   const novelFromUserId = useSelector((state) => state.params.novelFromUserId);
   const chapterTitle = useSelector((state) => state.params.chapterTitle);
   const chapterContent = useSelector((state) => state.params.chapterContent);
-  const checkChapterContent = useSelector((state) => state.params.checkChapterContent);
   const chapterFromNovelId = useSelector((state) => state.params.chapterFromNovelId);
   const dispatch = useDispatch();
-  const [content, setContent] = useState('');
-
 
   const onSubmitFormHandler = async () => {
 
@@ -230,40 +227,31 @@ function WritingNavigator({route, navigation}){
    
   }
 
-  console.log('check content : ' + checkChapterContent);
-  console.log('content : ' + chapterContent);
-
-  const onUpdateFormHandler = async () => { 
-
-    try {
-
-        if (chapterContent === '') {
-        setContent(checkChapterContent);
-        alert('ไม่แก้เนื้อหา')
   
-        } else if (chapterContent !== '') {
-        setContent(chapterContent);
-        alert('แก้เนื้อหา')
-      }
+  const onUpdateFormHandler = async () => { 
+    try {
 
       const response = await axios.put(`http://10.0.2.2:3500/novel/editChapter`, {
         novelId: novelFromUserId,
         chapterId : chapterFromNovelId,
         title: chapterTitle,
-        content: content
+        content: chapterContent
       })
+
   
       if (response.status === 200) {
-        alert('แก้ไขตอนเรียบร้อยแล้ว');
+        // alert('แก้ไขตอนเรียบร้อยแล้ว');
         navigation.navigate('WritingScreen');
         dispatch(changeChapterContent(''));
-        dispatch(changeCheckChapterContent(''));
+ 
       } 
       
     } catch (error) {
-      console.log("ในการแก้ไขตอน : " + error.message); 
+      alert("ในการแก้ไขตอน : " + error); 
+      navigation.navigate('WritingScreen');
+      dispatch(changeChapterContent(''));
+
     }
-    
    
   }
 

@@ -1,32 +1,65 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView } from 'react-native'
-import React from 'react'
+import { View, Text, TouchableOpacity, StyleSheet, Image, ScrollView, FlatList } from 'react-native'
+import React, {useEffect, useState} from 'react'
 import { Ionicons, FontAwesome5  } from '@expo/vector-icons'; 
+import { useSelector } from "react-redux";
+import axios from "axios";
 
 const Notifications = ({route, navigation}) => {
+  const [Notification, setNotification] = useState([]);
+  const userId = useSelector((state) => state.params.userId);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await axios.get("http://10.0.2.2:3500/user/getNotification", {
+          params: {
+            userId: userId
+          }
+        })
+        setNotification(response.data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchData();
+  });
+
+
+  const renderNotification = ({ item }) => {
+    return (
+      <View>
+
+
+
+        <View style={styles.boxnoti}>
+      <Image style={styles.imagebox} source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}} />
+      <View>
+      <Text style={styles.textbox1}>ตอนใหม่มาแล้ว! {item.title}</Text>
+      <View style={{marginBottom: 20}}></View>
+      <View style={styles.count}>
+        <Ionicons name="eye" size={18} color="#909090" />
+        <Text style={styles.textbox2}> {item.like.length}  </Text>
+        <Ionicons name="heart-sharp" size={18} color="#909090" />
+        <Text style={styles.textbox2}> {item.views.length}</Text>
+      </View>
+      </View>
+    </View>
+
+
+
+      </View>
+    )
+  }
+
   return (
     <View>
 
     <ScrollView>
-    {/* 1 BOX */}
-    <TouchableOpacity onPress={() => {navigation.navigate("ChapterFictionScreensssss")}}>
-    <View style={styles.boxnoti}>
-      <Image style={styles.imagebox} source={require('../assets/title_fiction2.jpg')} />
-      <View>
-      <Text style={styles.textbox1}>ตอนที่1 แต่งงานกันนะไอต้าว</Text>
-      <View style={styles.usercard}>
-        <FontAwesome5 name="user-alt" size={16} color="#909090" />
-        <Text style={styles.textbox2}>  ingfah bbibbi</Text>
-      </View>
-      <View style={styles.count}>
-        <Ionicons name="eye" size={18} color="#909090" />
-        <Text style={styles.textbox2}> 302k  </Text>
-        <Ionicons name="heart-sharp" size={18} color="#909090" />
-        <Text style={styles.textbox2}> 982</Text>
-      </View>
-      </View>
-    </View>
-    </TouchableOpacity>
-
+        <FlatList
+          data={Notification}
+          renderItem={renderNotification}
+          keyExtractor={(item) => item._id}
+          />
     </ScrollView>
     
 

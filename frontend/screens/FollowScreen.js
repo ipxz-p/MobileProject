@@ -8,6 +8,7 @@ const FollowScreen = ({route, navigation}) => {
   const [Author, setAuthor] = useState([]);
   const dispatch = useDispatch();
   const userId = useSelector((state) => state.params.userId);
+
   useEffect(() => {
     async function fetchData() {
       try {
@@ -23,7 +24,25 @@ const FollowScreen = ({route, navigation}) => {
     }
     fetchData(); // Call the async function
   });
+
   
+  const onDeleteFollowHandler = async (event) => {
+    try {
+      const response = await axios.post(`http://10.0.2.2:3500/user/addOrRemoveFollower`, {
+        userId: event,
+        yourUserId: userId,
+      })
+  
+      if (response.status === 200) {
+        // alert('ลบสำเร็จ');
+      } 
+      else {
+        throw new Error("An error has occurred");
+      }
+    } catch (error) {
+      alert("An error has occurred");
+    }
+  }
 
   const gotoAuthorHandler = (navigation, authorId) => {
     dispatch(gotoAuthor(authorId));
@@ -38,12 +57,12 @@ const FollowScreen = ({route, navigation}) => {
       <TouchableOpacity style={styles.btntoauther} onPress={() => { gotoAuthorHandler(navigation, item._id); }}>
         <View style={styles.viewbox}>
           <View style={styles.imandtext}>
-            <Image style={styles.imagebox} source={require('../assets/auther.jpg')} />
+            <Image style={styles.imagebox} source={{ uri: `http://10.0.2.2:3500/img/${item.profileImgPath}`}} />
             <Text>{item.username}</Text>
           </View>
-          {/* <TouchableOpacity style={styles.btndel}>
+          <TouchableOpacity style={styles.btndel} onPress={()=> {onDeleteFollowHandler(item._id)}}>
             <Text style={styles.btndeltext}>ลบออก</Text>
-          </TouchableOpacity> */}
+          </TouchableOpacity>
         </View>
       </TouchableOpacity>
       {/* end 1Auther */}
@@ -57,8 +76,6 @@ const FollowScreen = ({route, navigation}) => {
           renderItem={renderAuthor}
           keyExtractor={(item) => item._id}
           />
-
-        <Text>ddddddd</Text>
       
 
 
