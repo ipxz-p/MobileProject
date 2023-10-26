@@ -237,7 +237,9 @@ const HomeScreen = ({ route, navigation }) => {
 
   const renderRecommend = ({ item }) => {
     return (
+      // <Text>dsdddddddddddd</Text>
       <View style={styles.box}>
+        
             <Image
               style={styles.titleimage}
               source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}}
@@ -256,13 +258,13 @@ const HomeScreen = ({ route, navigation }) => {
                 <Text style={styles.txt3}>
                   {item.category == "love"
                     ? "นิยายรัก"
-                    : Novel[NewNovel].category == "adult"
+                    : item.category == "adult"
                     ? "นิยาย18+"
-                    : Novel[NewNovel].category == "y"
+                    : item.category == "y"
                     ? "นิยายวาย"
-                    : Novel[NewNovel].category == "fantasy"
+                    : item.category == "fantasy"
                     ? "นิยายแฟนตาซี"
-                    : Novel[NewNovel].category == "investigate"
+                    : item.category == "investigate"
                     ? "นิยายสืบสวน"
                     : "error"}
                 </Text>
@@ -296,6 +298,7 @@ const HomeScreen = ({ route, navigation }) => {
   
   return (
     <View>
+      
       <ScrollView>
         {/* Top of the week */}
         <LinearGradient colors={["#5652C9", "#8151C5"]}>
@@ -307,7 +310,7 @@ const HomeScreen = ({ route, navigation }) => {
                 data={Novel}
                 keyExtractor={(item) => item._id}
                 renderItem={renderRecommend}
-                numColumns={14}
+                numColumns={100}
               />
             </View>
           </ScrollView>
@@ -455,7 +458,7 @@ const HomeScreen = ({ route, navigation }) => {
                 data={Novel}
                 keyExtractor={(item) => item._id}
                 renderItem={renderLoveCatagory}
-                numColumns={14}
+                numColumns={100}
               />
               {/* End Card */}
             </View>
@@ -474,7 +477,7 @@ const HomeScreen = ({ route, navigation }) => {
                 data={Novel}
                 keyExtractor={(item) => item._id}
                 renderItem={renderAdultCatagory}
-                numColumns={14}
+                numColumns={100}
               />
               {/* End Card */}
             </View>
@@ -493,7 +496,7 @@ const HomeScreen = ({ route, navigation }) => {
                 data={Novel}
                 keyExtractor={(item) => item._id}
                 renderItem={renderYCatagory}
-                numColumns={14}
+                numColumns={100}
               />
               {/* End Card */}
             </View>
@@ -512,7 +515,7 @@ const HomeScreen = ({ route, navigation }) => {
                 data={Novel}
                 keyExtractor={(item) => item._id}
                 renderItem={renderFantasyCatagory}
-                numColumns={14}
+                numColumns={100}
               />
               {/* End Card */}
             </View>
@@ -531,7 +534,7 @@ const HomeScreen = ({ route, navigation }) => {
                 data={Novel}
                 keyExtractor={(item) => item._id}
                 renderItem={renderInvestigateCatagory}
-                numColumns={14}
+                numColumns={100}
               />
               {/* End Card */}
             </View>

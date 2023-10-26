@@ -81,7 +81,7 @@ const IndexFiction = ({ route, navigation }) => {
     
   }, []);
 
-  
+  // console.log(novelId)
 
   const onBookShelfHandler = async (event) => {
     try {
@@ -215,7 +215,17 @@ const IndexFiction = ({ route, navigation }) => {
                   <Text
                     style={{ color: "#fff", fontWeight: "bold", fontSize: 13 }}
                   >
-                    {item.category === 'love' ? 'นิยายรัก' : 'adult' ? 'นิยาย18+' : 'y' ? 'นิยายวาย' : 'fantasy' ? 'นิยายแฟนตาซี' : 'investigate' ? 'นิยายสืบสวน' : 'error'}
+                    {item.category == "love"
+                    ? "นิยายรัก"
+                    : item.category == "adult"
+                    ? "นิยาย18+"
+                    : item.category == "y"
+                    ? "นิยายวาย"
+                    : item.category == "fantasy"
+                    ? "นิยายแฟนตาซี"
+                    : item.category == "investigate"
+                    ? "นิยายสืบสวน"
+                    : "error"}
                   </Text>
                 </View>
               </View>

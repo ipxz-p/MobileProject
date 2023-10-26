@@ -88,13 +88,13 @@ const WritingScreen = ({route, navigation}) => {
               </View>
              
               <Ionicons style={{marginRight: 2, marginTop: 1}} name="eye" size={17} color="#909090" />
-              <Text style={{ fontSize: 14, color: '#7B7D7D', marginRight: 8, marginTop: 1}} > {item.views.length}</Text>
+              <Text style={{ fontSize: 14, color: '#7B7D7D', marginRight: 8, marginTop: 1}} > {item.chapterViewsSum}</Text>
               
-              <MaterialCommunityIcons style={{marginRight: 2, marginTop: 2,}} name="comment-processing" size={17} color="#909090" />
+              {/* <MaterialCommunityIcons style={{marginRight: 2, marginTop: 2,}} name="comment-processing" size={17} color="#909090" />
               <Text style={{ fontSize: 14, color: '#7B7D7D', marginRight: 8,  marginTop: 1}} >0</Text>
-             
+              */}
               <FontAwesome style={{marginRight: 2 , marginTop: 2,}} name="heart" size={15} color="#909090" />
-              <Text style={{ fontSize: 14, color: '#7B7D7D', marginRight: 8, marginTop: 1}} > {item.like.length}</Text>
+              <Text style={{ fontSize: 14, color: '#7B7D7D', marginRight: 8, marginTop: 1}} > {item.chapterLikeSum}</Text>
             </View>
           </View>
         </View>

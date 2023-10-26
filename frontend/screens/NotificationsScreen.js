@@ -26,22 +26,22 @@ const Notifications = ({route, navigation}) => {
 
 
   const renderNotification = ({ item }) => {
+    // console.log(item);
     return (
       <View>
 
-
-
-        <View style={styles.boxnoti}>
-      <Image style={styles.imagebox} source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}} />
+      <View style={styles.boxnoti}>
+      {/* <Image style={styles.imagebox} source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}} /> */}
       <View>
-      <Text style={styles.textbox1}>ตอนใหม่มาแล้ว! {item.title}</Text>
+      <Text style={styles.textbox1}>ตอนใหม่มาแล้ว! </Text>
+      <Text style={styles.textbox3}>{item.title}</Text>
       <View style={{marginBottom: 20}}></View>
-      <View style={styles.count}>
+      {/* <View style={styles.count}>
         <Ionicons name="eye" size={18} color="#909090" />
         <Text style={styles.textbox2}> {item.like.length}  </Text>
         <Ionicons name="heart-sharp" size={18} color="#909090" />
         <Text style={styles.textbox2}> {item.views.length}</Text>
-      </View>
+      </View> */}
       </View>
     </View>
 
@@ -71,7 +71,7 @@ const styles = StyleSheet.create({
   boxnoti: {
     flexDirection: 'row',
     padding: 10,
-    backgroundColor: '#fff'
+    backgroundColor: '#fff',
   },
   imagebox: {
     width: 80,
@@ -84,7 +84,8 @@ const styles = StyleSheet.create({
   textbox1: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 4,
+    marginBottom: 0,
+    margin: 10,
   },
   textbox2: {
     color: '#7B7D7D',
@@ -97,6 +98,12 @@ const styles = StyleSheet.create({
   },
   count: {
     flexDirection: 'row',
+  },
+  textbox3: {
+    fontSize: 18,
+    marginBottom: 4,
+    margin: 10,
+    marginBottom: 0,
   },
 });
 export default Notifications
