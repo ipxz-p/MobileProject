@@ -274,7 +274,7 @@ const HomeScreen = ({ route, navigation }) => {
               <Ionicons name="eye" size={18} color="#fff" />
               <Text style={styles.txtcardfiction2}> {item.chapterViewsSum} </Text>
               <Ionicons name="heart-sharp" size={18} color="#fff" />
-              <Text style={styles.txtcardfiction2}> {item.like.length} </Text>
+              <Text style={styles.txtcardfiction2}> {item.chapterLikeSum} </Text>
             </View>
 
               <LinearGradient

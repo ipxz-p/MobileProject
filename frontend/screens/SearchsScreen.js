@@ -40,7 +40,6 @@ const SearchsScreen = ({route, navigation}) => {
     if (typeof novel === 'string' && novel.includes(query)) {
       console.log("true");
       return true;
-      
     }
     console.log("false");
     return false;
