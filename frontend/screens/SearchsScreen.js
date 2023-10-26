@@ -99,7 +99,7 @@ const SearchsScreen = ({route, navigation}) => {
         value={searchQuery}
         autoCorrect={false}
         onChangeText={(query) => handleSearch(query)}></TextInput>
-        <View style={{backgroundColor: "#dcdcdc", width: '11%', padding: 10, height: 42, borderTopRightRadius: 10, borderBottomRightRadius: 10, borderWidth: 1, borderColor: '#dcdcdc'}}>
+        <View style={{backgroundColor: "#8151C5", width: '11%', padding: 10, height: 42, borderTopRightRadius: 10, borderBottomRightRadius: 10, borderWidth: 1, borderColor: '#dcdcdc'}}>
           <AntDesign name="search1" size={21} color="white" />
         </View>
       </View>

@@ -26,15 +26,17 @@ const Notifications = ({route, navigation}) => {
 
 
   const renderNotification = ({ item }) => {
-    // console.log(item);
+    // console.log(item.chapterData.title);
     return (
       <View>
 
       <View style={styles.boxnoti}>
-      {/* <Image style={styles.imagebox} source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}} /> */}
+      <Image style={styles.imagebox} source={{ uri: `http://10.0.2.2:3500/img/${item.images}`}} />
       <View>
-      <Text style={styles.textbox1}>ตอนใหม่มาแล้ว! </Text>
-      <Text style={styles.textbox3}>{item.title}</Text>
+      {/* <Text style={styles.textbox1}>ตอนใหม่มาแล้ว! </Text> */}
+      <Text style={styles.textbox1}>{item.titleOfNovel}</Text>
+      <Text style={styles.textbox3}>{item.chapterData.title}</Text>
+      
       <View style={{marginBottom: 20}}></View>
       {/* <View style={styles.count}>
         <Ionicons name="eye" size={18} color="#909090" />
@@ -79,13 +81,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10
+    marginRight: 15
   },
   textbox1: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 0,
-    margin: 10,
+    marginBottom: 4,
+    marginTop: 12,
   },
   textbox2: {
     color: '#7B7D7D',
@@ -102,8 +104,8 @@ const styles = StyleSheet.create({
   textbox3: {
     fontSize: 18,
     marginBottom: 4,
-    margin: 10,
-    marginBottom: 0,
+    // margin: 10,
+    // marginBottom: 0,
   },
 });
 export default Notifications
