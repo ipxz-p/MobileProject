@@ -76,7 +76,15 @@ export const getNotification = async (req, res) => {
         const notificationId = user.notification[i];
         const novel = await novels.findOne({ "chapter._id": notificationId }).exec();
         if (novel) {
-            arrNoti.push(novel.chapter.find(chapter => chapter._id.equals(notificationId)));
+            const chapterData = novel.chapter.find((chapter) => chapter._id.equals(notificationId));
+            if (chapterData) {
+                const data = {
+                    chapterData,
+                    images: novel.images,
+                    titleOfNovel: novel.title
+                }
+                arrNoti.push(data);
+            }
         }
     }
     arrNoti.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));

@@ -182,6 +182,7 @@ export const createChapter = async (req, res) => {
     await Novel.save();
     return res.status(200).json(Novel.chapter);
 }
+
 export const editChapter = async (req, res) => {
     const {
         novelId,
